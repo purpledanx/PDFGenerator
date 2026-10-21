@@ -72,7 +72,12 @@ test('advancing, repeating and moving backwards reconcile later completion marke
 
 
 test('Blue level 5 Solve 1 uses the first wrench regardless of Courses list order', async () => {
-  for (const entries of [tasks, [...tasks].reverse(), ['Lvl 5 Solve 1']]) {
+  // Actual IMPACT_Blue Level 5 entries supplied from the journal's Courses tab.
+  const journalLevel5 = [
+    'Lvl 5 Build 1', 'Lvl 5 Build 2', 'Lvl 5 Solve 1', 'Lvl 5 Solve 2',
+    'Lvl 5 Explore 1', 'Lvl 5 Explore 2', 'Lvl 5 Quest / Adventure',
+  ];
+  for (const entries of [journalLevel5, tasks, [...tasks].reverse(), ['Lvl 5 Solve 1']]) {
     let pdf = await fixture();
     for (const name of ['Dropdown34', 'Dropdown44', 'Dropdown25']) {
       pdf.getForm().getDropdown(name).select('C');
