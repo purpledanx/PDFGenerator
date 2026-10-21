@@ -16,10 +16,12 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The fix removes obsolete W/R markers in later IMPACT levels, supports clearing
-dropdowns without a blank option, and refreshes preceding C/L appearances.
-Recorded C/S/L history remains preserved. Current-level quest approval behavior
-is unchanged.
+Blue numbered Solve projects map directly to the printed wrench fields, regardless
+of Courses list order. Earlier activities become C and earlier levels receive L.
+Later IMPACT C/W/R/L markers are cleared to match the journal project; explicit S
+skips remain. Dropdowns without blank options can also be cleared. Quest level-up
+still requires approval. Moving the journal project backwards resets later progress,
+so use Undo Last PDF Update to restore the prior tracker if needed.
 
 ## Local checks
 

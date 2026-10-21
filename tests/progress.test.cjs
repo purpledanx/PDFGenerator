@@ -8,7 +8,7 @@ const context = vm.createContext({});
 vm.runInContext(fs.readFileSync(require.resolve('../PDFGenerator.gs'), 'utf8'), context);
 const meta = vm.runInContext('TRACKER_FIELDS.IMPACT_Blue', context);
 const tasks = [1, 2, 3, 4, 5, 6].flatMap(level =>
-  [1, 2, 3].map(project => `Lvl ${level} Solve ${project}`));
+  (level === 6 ? [] : [`Lvl ${level} Discovery`]).concat([1, 2, 3].map(project => `Lvl ${level} Solve ${project}`)));
 
 async function fixture() {
   const pdf = await PDFDocument.create();
@@ -49,23 +49,42 @@ test('moving from level 6 to level 5 clears future W/R and writes visible C/W/L'
   assert.equal(selected(pdf, 'Dropdown25'), '');
   assert.equal(selected(pdf, 'Dropdown35'), '');
   assert.equal(selected(pdf, 'Dropdown14'), 'S');
-  assert.equal(selected(pdf, 'Dropdown24'), 'W');
+  assert.equal(selected(pdf, 'Dropdown34'), 'W');
   assert.equal(selected(pdf, 'Dropdown13'), 'C');
   assert.equal(selected(pdf, 'Dropdown63'), 'L');
-  for (const [name, letter] of [['Dropdown24', 'W'], ['Dropdown13', 'C'], ['Dropdown63', 'L']]) {
+  for (const [name, letter] of [['Dropdown34', 'W'], ['Dropdown13', 'C'], ['Dropdown63', 'L']]) {
     assert.match(appearance(pdf, name), new RegExp(`<${letter.charCodeAt(0).toString(16)}> Tj`, 'i'));
   }
   assert.doesNotMatch(appearance(pdf, 'Dropdown35'), /<57> Tj/);
 });
 
-test('advancing, repeating and moving backwards leave one current W and preserve history', async () => {
+test('advancing, repeating and moving backwards reconcile later completion markers', async () => {
   let pdf = await fixture();
   for (const task of ['Lvl 5 Solve 1', 'Lvl 5 Solve 2', 'Lvl 6 Solve 1', 'Lvl 6 Solve 1', 'Lvl 5 Solve 1']) {
     pdf = await update(pdf, task);
     const working = meta.levels.flat().filter(name => selected(pdf, name) === 'W');
     assert.deepEqual(Array.from(working), [task.startsWith('Lvl 6') ? 'Dropdown25' :
-      task.endsWith('2') ? 'Dropdown34' : 'Dropdown24']);
+      task.endsWith('2') ? 'Dropdown44' : 'Dropdown34']);
   }
-  assert.equal(selected(pdf, 'Dropdown54'), 'L');
-  assert.equal(selected(pdf, 'Dropdown34'), 'C');
+  assert.equal(selected(pdf, 'Dropdown54'), '');
+  assert.equal(selected(pdf, 'Dropdown44'), '');
+});
+
+
+test('Blue level 5 Solve 1 uses the first wrench regardless of Courses list order', async () => {
+  for (const entries of [tasks, [...tasks].reverse(), ['Lvl 5 Solve 1']]) {
+    let pdf = await fixture();
+    for (const name of ['Dropdown34', 'Dropdown44', 'Dropdown25']) {
+      pdf.getForm().getDropdown(name).select('C');
+    }
+    pdf.getForm().getDropdown('Dropdown54').select('L');
+    context.applyImpact_(pdf.getForm(), meta, 'IMPACT_Blue', 'Lvl 5 Solve 1', entries,
+      'W', 'Sensei', { short: '10/21/26' }, 'Student', 'Working on Lvl 5 Solve 1!', []);
+    pdf.getForm().updateFieldAppearances(await pdf.embedFont(StandardFonts.Helvetica));
+    pdf = await PDFDocument.load(await pdf.save());
+    assert.deepEqual(Array.from(meta.levels[4], name => selected(pdf, name)), ['C', 'C', 'W', '', '']);
+    assert.deepEqual(Array.from(meta.levels[5], name => selected(pdf, name)), ['', '', '']);
+    assert.match(appearance(pdf, 'Dropdown34'), /<57> Tj/);
+    assert.doesNotMatch(appearance(pdf, 'Dropdown54'), /<4c> Tj/i);
+  }
 });
