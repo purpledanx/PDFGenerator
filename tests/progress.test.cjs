@@ -1,0 +1,71 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const { PDFDocument, StandardFonts, PDFName, decodePDFRawStream } = require('pdf-lib');
+
+const context = vm.createContext({});
+vm.runInContext(fs.readFileSync(require.resolve('../PDFGenerator.gs'), 'utf8'), context);
+const meta = vm.runInContext('TRACKER_FIELDS.IMPACT_Blue', context);
+const tasks = [1, 2, 3, 4, 5, 6].flatMap(level =>
+  [1, 2, 3].map(project => `Lvl ${level} Solve ${project}`));
+
+async function fixture() {
+  const pdf = await PDFDocument.create();
+  const page = pdf.addPage();
+  const form = pdf.getForm();
+  for (const name of ['Text1', 'Text2', 'Date3_af_date', 'Text3', 'Text4']) {
+    form.createTextField(name);
+  }
+  meta.levels.forEach((names, level) => names.forEach((name, index) => {
+    const field = form.createDropdown(name);
+    // Deliberately omit a blank option to exercise imported templates that
+    // cannot clear a stale W by selecting a literal space.
+    field.addOptions(index === names.length - 1 ? ['L'] : ['C', 'W', 'S', 'R']);
+    field.addToPage(page, { x: 20 + index * 60, y: 700 - level * 60, width: 45, height: 20 });
+  }));
+  return pdf;
+}
+
+async function update(pdf, task) {
+  context.applyImpact_(pdf.getForm(), meta, 'IMPACT_Blue', task, tasks,
+    'W', 'Sensei', { short: '10/21/26' }, 'Student', `Working on ${task}!`, []);
+  pdf.getForm().updateFieldAppearances(await pdf.embedFont(StandardFonts.Helvetica));
+  return PDFDocument.load(await pdf.save());
+}
+const selected = (pdf, name) => pdf.getForm().getDropdown(name).getSelected()[0] || '';
+function appearance(pdf, name) {
+  const widget = pdf.getForm().getDropdown(name).acroField.getWidgets()[0];
+  const stream = widget.dict.lookup(PDFName.of('AP')).lookup(PDFName.of('N'));
+  return Buffer.from(decodePDFRawStream(stream).decode()).toString();
+}
+
+test('moving from level 6 to level 5 clears future W/R and writes visible C/W/L', async () => {
+  let pdf = await fixture();
+  pdf.getForm().getDropdown('Dropdown35').select('W');
+  pdf.getForm().getDropdown('Dropdown25').select('R');
+  pdf.getForm().getDropdown('Dropdown14').select('S');
+  pdf = await update(pdf, 'Lvl 5 Solve 1');
+  assert.equal(selected(pdf, 'Dropdown25'), '');
+  assert.equal(selected(pdf, 'Dropdown35'), '');
+  assert.equal(selected(pdf, 'Dropdown14'), 'S');
+  assert.equal(selected(pdf, 'Dropdown24'), 'W');
+  assert.equal(selected(pdf, 'Dropdown13'), 'C');
+  assert.equal(selected(pdf, 'Dropdown63'), 'L');
+  for (const [name, letter] of [['Dropdown24', 'W'], ['Dropdown13', 'C'], ['Dropdown63', 'L']]) {
+    assert.match(appearance(pdf, name), new RegExp(`<${letter.charCodeAt(0).toString(16)}> Tj`, 'i'));
+  }
+  assert.doesNotMatch(appearance(pdf, 'Dropdown35'), /<57> Tj/);
+});
+
+test('advancing, repeating and moving backwards leave one current W and preserve history', async () => {
+  let pdf = await fixture();
+  for (const task of ['Lvl 5 Solve 1', 'Lvl 5 Solve 2', 'Lvl 6 Solve 1', 'Lvl 6 Solve 1', 'Lvl 5 Solve 1']) {
+    pdf = await update(pdf, task);
+    const working = meta.levels.flat().filter(name => selected(pdf, name) === 'W');
+    assert.deepEqual(Array.from(working), [task.startsWith('Lvl 6') ? 'Dropdown25' :
+      task.endsWith('2') ? 'Dropdown34' : 'Dropdown24']);
+  }
+  assert.equal(selected(pdf, 'Dropdown54'), 'L');
+  assert.equal(selected(pdf, 'Dropdown34'), 'C');
+});
