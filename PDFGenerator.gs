@@ -232,10 +232,8 @@ function openTrackerPopup() {
   </div>
   <div id="details" hidden>
     <h3 id="detailTitle">Generate tracker</h3>
-    <p class="muted">Date is read automatically from the sheet tab. ${escapeHtml_(safeAction)}.</p>
     <label>Sensei</label><input type="text" id="sensei" value="${escapeHtml_(sensei)}" placeholder="Enter Sensei name">
     <div id="singleFields">
-      <p class="muted">Current project: <b>Work in progress (W)</b> (always).</p>
       ${isScratchJr ? `<div id="scratchStars">
         <label>Scratch Jr stars (optional)</label>
         <select id="stars"><option value="0">Leave existing stars unchanged</option><option value="1">1 star</option><option value="2">2 stars</option><option value="3">3 stars</option></select>
@@ -254,13 +252,6 @@ function openTrackerPopup() {
       </div>` : ''}
       <label>Notes for the PDF</label>
       <textarea id="notes" maxlength="180" placeholder="Session notes">${escapeHtml_(notes)}</textarea>
-    </div>
-    <div id="dayHelp" hidden>
-      <p style="padding:12px;border:2px solid #b3261e;background:#fce8e6;color:#b3261e;border-radius:5px">
-        <strong>DO NOT CLOSE DIALOG</strong><br>
-        Keep this dialog open until the whole-day run finishes. Closing it stops the remaining students from processing.
-      </p>
-      <p class="muted">Each student uses their own belt and project from columns D/E with the default note "Working on [project]!". Current activity is always <b>W</b> (in progress). Unity gets no default note. Scratch Jr stars remain unchanged.</p>
     </div>
     <div class="actions"><button class="secondary" id="back" onclick="goBack()">Back</button>
       <button class="primary" id="submit" onclick="submitCards()">${escapeHtml_(safeAction)}</button></div>
