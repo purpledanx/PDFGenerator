@@ -99,3 +99,19 @@ test('whole-day warning appears immediately and scope selection has no missing-e
   assert.equal(elements.singleFields.hidden,false);
   assert.match(source,/DO NOT CLOSE THIS DIALOG/);assert.match(source,/position:sticky;top:0/);
 });
+
+test('rendered popup includes a visible warning on the day option and valid client JavaScript',()=>{
+  let html='',title='';
+  const cells={1:'Oliver P',4:'IMPACT_Yellow',5:'Lvl 4 Explore 2'};
+  const ss={getName:()=> 'Journal 10-2026'};
+  const sh={getName:()=> '10-10',getParent:()=>ss,getActiveRange:()=>({getRow:()=>3}),getLastRow:()=>3,
+    getRange:(r,c,nr=1)=>({getDisplayValue:()=>cells[c]||'',getDisplayValues:()=>Array.from({length:nr},()=>[cells[c]||''])})};
+  const c=vm.createContext({SpreadsheetApp:{getActiveSheet:()=>sh,getUi:()=>({showModalDialog:(output,t)=>title=t})},
+    HtmlService:{createHtmlOutput:text=>{html=text;const output={setWidth:()=>output,setHeight:()=>output};return output;}}});
+  vm.runInContext(source,c);c.initializePdfStatuses_=()=>{};c.lastTrackerRun_=()=>null;c.getSuggestedNote_=()=>'';
+  c.openTrackerPopup();
+  const option=html.match(/<label class="radio"><input[^>]*value="day"[\s\S]*?<\/label>/)[0];
+  assert.match(option,/DO NOT CLOSE THIS DIALOG/);assert.doesNotMatch(option,/\bhidden\b/);
+  const client=html.match(/<script>([\s\S]*?)<\/script>/)[1];assert.doesNotThrow(()=>new vm.Script(client));
+  assert.match(title,/v28/);
+});
