@@ -339,7 +339,7 @@ function openTrackerPopup() {
         el('summary').textContent='Error: '+e.message;
       }).generateFromPopup(tab,chosenRow,s,stars,el('notes').value.trim(),cs1Index,cs1Date);
     } else {
-      el('summary').textContent='Preparing batch...';
+      el('summary').textContent='Preparing batch... You can close this dialog now.';
       google.script.run.withSuccessHandler(runId=>{
         if(!runId){running=false;buttonsDisabled(false);el('summary').textContent='Cancelled. No trackers changed.';return;}
         processNextBatch(s,runId);
