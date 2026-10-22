@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v24** after replacing the script and reloading the
+The popup title should show **v25** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -116,6 +116,12 @@ After running `sendEmails`, a spreadsheet notification reports how many emails
 were submitted, or explains that no rows were eligible. Validation and mail
 errors also appear in a notification and Apps Script execution logs. `EMAIL SENT`
 means Google accepted the send request; it does not confirm inbox delivery.
+
+Some belt PDFs have fewer activity markers than the Courses list has projects.
+When a project exceeds the available W/C/S slots (for example, Explore entries),
+the last valid activity marker is shared. Notes always identify the exact current
+project in this case. The quest marker stays separate, and genuinely ambiguous
+or missing fields still stop generation rather than updating the wrong field.
 
 Blue numbered Solve projects map directly to the printed wrench fields, regardless
 of Courses list order. Earlier activities become C and earlier levels receive L.

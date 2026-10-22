@@ -134,8 +134,54 @@ test('Blue quest handles preceding R/L-only fields and does not shift later proj
   assert.equal(selected(pdf,'Dropdown53'),'');
   // Quest's newly added W option must not be counted as a work slot.
   const entries=['Lvl 4 Build 1','Lvl 4 Build 2','Lvl 4 Build 3','Lvl 4 Explore 1'];
-  assert.throws(()=>context.impactTarget_(pdf.getForm(),meta,'IMPACT_Blue',entries[3],entries),/No unambiguous/);
+  const target=context.impactTarget_(pdf.getForm(),meta,'IMPACT_Blue',entries[3],entries);
+  assert.equal(target.name,'Dropdown43');assert.equal(target.shared,true);
   pdf=await update(pdf,'Lvl 5 Solve 1');
   assert.equal(selected(pdf,'Dropdown63'),'L');
   assert.equal(selected(pdf,'Dropdown34'),'W');
+});
+
+async function impactFixture(course) {
+  const metadata=vm.runInContext('TRACKER_FIELDS.'+course,context);
+  const pdf=await PDFDocument.create(),page=pdf.addPage(),form=pdf.getForm();
+  for(const name of ['Text1','Text2','Date3_af_date','Text3','Text4'])form.createTextField(name);
+  metadata.levels.forEach((names,level)=>names.forEach((name,index)=>{
+    const field=form.createDropdown(name);field.addOptions(index===names.length-1?['R','L',' ']:['W','C','S',' ']);
+    field.addToPage(page,{x:20+index*55,y:700-level*60,width:45,height:20});
+  }));
+  return {pdf,metadata};
+}
+function levelProjects(level,count=2){
+  return ['Build','Solve','Explore'].flatMap(kind=>Array.from({length:count},(_,i)=>`Lvl ${level} ${kind} ${i+1}`))
+    .concat(`Lvl ${level} Quest / Adventure`);
+}
+
+test('reported Orange Explore 1 and Yellow Explore 2 save a visible W, exact Notes and no quest W',async()=>{
+  for(const [course,task,level]of [['IMPACT_Orange','Lvl 1 Explore 1',1],['IMPACT_Yellow','Lvl 4 Explore 2',4]]){
+    const {pdf,metadata}=await impactFixture(course),warnings=[];
+    context.applyImpact_(pdf.getForm(),metadata,course,task,levelProjects(level),'W','Sensei',
+      {short:'10/10/26'},'Student','Keep on task',warnings);
+    pdf.getForm().updateFieldAppearances(await pdf.embedFont(StandardFonts.Helvetica));
+    const saved=await PDFDocument.load(await pdf.save());
+    const expected=metadata.levels[level-1].at(-2),quest=metadata.levels[level-1].at(-1);
+    assert.equal(selected(saved,expected),'W');assert.equal(selected(saved,quest),'');
+    assert.match(appearance(saved,expected),/<57> Tj/);
+    assert.ok(saved.getForm().getTextField('Text3').getText().includes(task));
+    assert.equal(Array.from(metadata.levels.flat()).filter(n=>selected(saved,n)==='W').length,1);
+    assert.ok(warnings.some(w=>w.includes('Multiple projects')));
+  }
+});
+
+test('all standard Build, Solve and Explore entries on Yellow, Orange and Blue resolve without choosing the quest',async()=>{
+  for(const course of ['IMPACT_Yellow','IMPACT_Orange','IMPACT_Blue']){
+    const {pdf,metadata}=course==='IMPACT_Blue'?{pdf:await fixture(),metadata:meta}:await impactFixture(course);
+    for(let level=1;level<=metadata.levels.length;level++){
+      const projects=levelProjects(level,course==='IMPACT_Blue'&&level<5?3:2);
+      for(const task of projects.filter(t=>!t.includes('Quest'))){
+        const target=context.impactTarget_(pdf.getForm(),metadata,course,task,projects);
+        assert.notEqual(target.name,metadata.levels[level-1].at(-1));
+        assert.ok(pdf.getForm().getDropdown(target.name).getOptions().includes('W'));
+      }
+    }
+  }
 });
