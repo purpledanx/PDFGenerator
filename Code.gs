@@ -218,9 +218,10 @@ function journalSendEmails_(confirm=false) {
         if(!ninja || !level || !project || !email) throw new Error('Missing student, current belt/project, or parent email.');
         if(journalClientIndex_(ninja,names)<0) throw new Error('Student is not in Clients.');
         if(journalRequiresPdf_(level)) {
+          const pdfStatus=sheet.getRange(row,14).getDisplayValue().trim();
           if(sheet.getRange(1,14).getDisplayValue().trim()!=='PDF STATUS' ||
-             sheet.getRange(row,14).getDisplayValue().trim()!=='PDF UPDATED')
-            throw new Error('Regenerate the tracker first: PDF STATUS must be PDF UPDATED.');
+             !['PDF UPDATED','UNDONE'].includes(pdfStatus))
+            throw new Error('Regenerate or restore the tracker first: PDF STATUS must be PDF UPDATED or UNDONE.');
         }
         const link=level==='JR'?(jrLink||trackerLink):trackerLink;
         if(!/^https:\/\/drive\.google\.com\//i.test(link)) throw new Error('Missing or invalid Google Drive tracker/folder URL.');

@@ -104,7 +104,9 @@ progress. The next session therefore loads the saved history folder URL.
 `saveClientsProgress` and `reupdateClientsProgress` also persist those links.
 
 Only rows with K checked and L exactly `NOT SENT` are eligible. For IMPACT, Unity,
-CS_1 and JR, N must be `PDF UPDATED` and N1 must be `PDF STATUS`. Fundamentals
+CS_1 and JR, N must be `PDF UPDATED` or `UNDONE` and N1 must be `PDF STATUS`.
+`UNDONE` sends the restored tracker/link without requiring regeneration.
+Fundamentals
 keeps its existing workflow because the PDF generator does not support it.
 Every eligible row is validated and its HTML rendered before any email is sent;
 an invalid row blocks the batch with row-specific errors. The existing HTML

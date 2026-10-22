@@ -82,12 +82,24 @@ test('email uses journal date and labeled folder URL, then saves progress and tr
 });
 
 test('one ready row with a stale PDF blocks all emails before any send',()=>{
-  for(const status of ['FAILED','NEEDS UPDATE','GENERATING','UNDONE','NOT GENERATED','']){
+  for(const status of ['FAILED','NEEDS UPDATE','GENERATING','NOT GENERATED','']){
     const h=harness([row(),row('Jack S',{14:status})]);
     assert.throws(()=>h.c.sendEmails(),/No emails sent.*\nRow 4.*PDF STATUS/s);
     assert.equal(h.sent.length,0);assert.equal(h.daily.getRange(3,12).getValue(),'NOT SENT');
     assert.deepEqual(h.locks,['lock','unlock']);
   }
+});
+
+test('UNDONE trackers can be emailed using the restored PDF or folder links',()=>{
+  const h=harness([row('Naveed F',{9:oldPdf,14:'UNDONE'}),row('Jack S',{9:folder,14:'UNDONE'})]);
+  const result=h.c.sendEmails();
+  assert.equal(result.sent,2);assert.equal(h.sent.length,2);
+  assert.ok(h.sent[0].htmlBody.includes(oldPdf));assert.ok(h.sent[1].htmlBody.includes(folder));
+  assert.equal(h.daily.getRange(3,12).getValue(),'EMAIL SENT');
+  assert.equal(h.daily.getRange(4,12).getValue(),'EMAIL SENT');
+  assert.equal(h.daily.getRange(3,14).getValue(),'UNDONE');
+  assert.equal(h.clients.getRange(2,3).getValue(),oldPdf);
+  assert.equal(h.clients.getRange(3,3).getValue(),folder);
 });
 
 test('unchecked rows and already sent rows are skipped, including their PDF validation',()=>{
