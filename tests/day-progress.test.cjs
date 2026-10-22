@@ -84,3 +84,18 @@ test('one invalid student cannot prevent whole-day confirmation from reaching ge
   assert.equal(c.confirmNewTrackerBelts_(sheet,[3],true),true);
   assert.throws(()=>c.confirmNewTrackerBelts_(sheet,[3]),/Unsupported course/);
 });
+
+test('whole-day warning appears immediately and scope selection has no missing-element references',()=>{
+  const ids=['dayWarning','choose','details','detailTitle','singleFields','summary','results','dayProgress','currentAction','done'];
+  const elements=Object.fromEntries(ids.map(id=>[id,{hidden:true,textContent:'',value:0}]));
+  const choice={value:'day'};
+  const c=vm.createContext({scope:'selected',selectedName:'Oliver P',rows:[3,4],
+    document:{querySelector:()=>choice},el:id=>{assert.ok(elements[id],'Missing element '+id);return elements[id];}});
+  const functions=source.slice(source.indexOf('  function showDayWarning(){'),source.indexOf('  function goBack(){'));
+  vm.runInContext(functions,c);c.showDayWarning();assert.equal(elements.dayWarning.hidden,false);
+  c.chooseScope();assert.equal(elements.details.hidden,false);assert.equal(elements.dayWarning.hidden,false);
+  assert.equal(elements.singleFields.hidden,true);
+  choice.value='selected';c.chooseScope();assert.equal(elements.dayWarning.hidden,true);
+  assert.equal(elements.singleFields.hidden,false);
+  assert.match(source,/DO NOT CLOSE THIS DIALOG/);assert.match(source,/position:sticky;top:0/);
+});
