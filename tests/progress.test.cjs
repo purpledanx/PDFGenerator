@@ -21,7 +21,10 @@ async function fixture() {
     const field = form.createDropdown(name);
     // Deliberately omit a blank option to exercise imported templates that
     // cannot clear a stale W by selecting a literal space.
-    field.addOptions(index === names.length - 1 ? ['L'] : ['C', 'W', 'S', 'R']);
+    // Match the uploaded Blue form: levels 1–4 have TWO R/L-only
+    // fields, including the dropdown printed beside the last wrench.
+    const reviewStart = level < 4 ? names.length - 2 : names.length - 1;
+    field.addOptions(index >= reviewStart ? ['R', 'L'] : ['W', 'C', 'S']);
     field.addToPage(page, { x: 20 + index * 60, y: 700 - level * 60, width: 45, height: 20 });
   }));
   return pdf;
@@ -43,10 +46,10 @@ function appearance(pdf, name) {
 test('moving from level 6 to level 5 clears future W/R and writes visible C/W/L', async () => {
   let pdf = await fixture();
   pdf.getForm().getDropdown('Dropdown35').select('W');
-  pdf.getForm().getDropdown('Dropdown25').select('R');
+  pdf.getForm().getDropdown('Dropdown45').select('R');
   pdf.getForm().getDropdown('Dropdown14').select('S');
   pdf = await update(pdf, 'Lvl 5 Solve 1');
-  assert.equal(selected(pdf, 'Dropdown25'), '');
+  assert.equal(selected(pdf, 'Dropdown45'), '');
   assert.equal(selected(pdf, 'Dropdown35'), '');
   assert.equal(selected(pdf, 'Dropdown14'), 'S');
   assert.equal(selected(pdf, 'Dropdown34'), 'W');
