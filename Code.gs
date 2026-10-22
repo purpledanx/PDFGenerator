@@ -6,6 +6,12 @@ const PENDING_MSG = 'NOT SENT';
 const COMPLETE_MSG = 'EMAIL SENT';
 const BG_COLOR = 'green';
 
+/**
+ * andrew.daniels: date in format: "MM-dd"
+ * @param {DateTime}  date  A date-time object, can be acquired by using
+ *                          ``Date()``
+ * @return {string}         A date string in format: "MM-dd"
+ */
 function getDateMd(date = new Date()) {
   return String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
 }

@@ -7,7 +7,7 @@ const lib=require('pdf-lib');
 const script=fs.readFileSync(require.resolve('../PDFGenerator.gs'),'utf8');
 const iterator=items=>{let i=0;return {hasNext:()=>i<items.length,next:()=>items[i++]};};
 
-async function harness({folderLink=false,currentOrange=false,wrongStudent=false,logFailure=false}={}) {
+async function harness({folderLink=false,currentOrange=false,wrongStudent=false,logFailure=false,blankLink=false}={}) {
   const files=new Map(),folders=new Map(),records=[],events=[];
   let seq=0,failLog=logFailure;
   const blob=(bytes,name)=>({getBytes:()=>Array.from(bytes),getName:()=>name});
@@ -46,7 +46,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   const template=file('Orange Belt IMPACT Template.pdf',orangeBytes,'templateOrange');
   let orange=null;
   if(currentOrange) orange=file('Naveed F Orange Belt IMPACT Tracker.pdf',orangeBytes,'currentOrange',history);
-  const originalLink=folderLink?history.getUrl():source.getUrl();
+  const originalLink=blankLink?'':folderLink?history.getUrl():source.getUrl();
   let link=originalLink;
   const cell={getRichTextValue:()=>null,getFormula:()=>'',getDisplayValue:()=>link,getColumn:()=>9,setValue:v=>{events.push('link');link=v;}};
   const sh={getName:()=> '10-10',getParent:()=>({}),getRange:(row,col,width,height)=>{
@@ -159,4 +159,42 @@ test('email link helper extracts folder URLs from labels and HYPERLINK formulas'
   assert.equal(c.getLink_({getRichTextValue:()=>({getLinkUrl:()=>url})}),url);
   assert.equal(c.getLink_({getRichTextValue:()=>null,getFormula:()=>`=HYPERLINK("${url}","Trackers")`}),url);
   assert.equal(c.getLink_({getRichTextValue:()=>null,getFormula:()=>'',getDisplayValue:()=>url}),url);
+});
+
+
+test('blank tracker link creates a filled Orange PDF and folder; Undo restores the blank link',async()=>{
+  const h=await harness({blankLink:true});await h.run(false);
+  const rec=h.records[0];assert.equal(rec.created,true);assert.equal(rec.archiveId,null);
+  assert.match(h.link,/folders\//);
+  const pdf=await lib.PDFDocument.load(h.files.get(rec.fileId).bytes);
+  assert.ok(pdf.getForm().getFieldMaybe('OrangeOnly'));
+  assert.equal(pdf.getForm().getDropdown('Dropdown2').getSelected()[0],'W');
+  h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss);
+  assert.equal(h.link,'');assert.equal(h.folders.get(rec.folderId).trashed,true);
+});
+
+test('failed missing-tracker creation restores the blank link and cleans generated files',async()=>{
+  const h=await harness({blankLink:true,logFailure:true});
+  await assert.rejects(h.run(false),/Undo log unavailable/);
+  assert.equal(h.link,'');
+  assert.equal([...h.folders.values()].filter(f=>f.name==='Naveed F Tracker PDFs'&&!f.trashed).length,0);
+});
+
+test('popup confirmation gates selected and entire-day server requests',()=>{
+  const submit=script.slice(script.indexOf('  function submitCards(){'),script.indexOf('  function processNextBatch('));
+  for(const scope of ['selected','day']) for(const confirmed of [false,true]) {
+    const calls=[],prompts=[];
+    const fields={sensei:{value:'Amber'},notes:{value:'Session notes'},keepHistory:{checked:true},summary:{textContent:''},results:{textContent:''}};
+    const run={withSuccessHandler(){return run;},withFailureHandler(){return run;},
+      generateFromPopup(...args){calls.push({kind:'selected',args});},beginDayTrackerRun_(...args){calls.push({kind:'day',args});}};
+    const c=vm.createContext({scope,running:false,undoBusy:false,isScratchJr:false,isCS1:false,rows:[3,4],
+      tab:'10-10',chosenRow:3,selectedName:'Naveed F',selectedCourse:'IMPACT_Orange',selectedProject:'Lvl 4 Build 2',
+      completed:0,failed:0,cursor:0,el:id=>fields[id],buttonsDisabled(){},processNextBatch(){},
+      google:{script:{run}},window:{confirm:message=>{prompts.push(message);return confirmed;}}});
+    vm.runInContext(submit+';submitCards();',c);
+    assert.equal(prompts.length,1);assert.match(prompts[0],/Missing trackers will be created/);
+    assert.equal(calls.length,confirmed?1:0);
+    if(confirmed) assert.equal(calls[0].kind,scope);
+    if(confirmed&&scope==='selected')assert.equal(calls[0].args.at(-1),true);
+  }
 });

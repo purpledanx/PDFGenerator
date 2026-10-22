@@ -19,8 +19,17 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v18** after replacing the script and reloading the
+The popup title should show **v19** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
+
+Both selected-student and entire-day generation ask for confirmation before
+starting. Missing belt trackers in an existing linked folder are created from
+the correct template. If the tracker link is blank, generation creates a student
+folder in My Drive, adds the filled tracker, and writes the folder URL to I/J.
+Undo removes the generated files and restores the previous link, including a
+blank link. An inaccessible or invalid existing link is reported rather than
+silently replaced. The dated `getDateMd` documentation comment is retained in
+`Code.gs`.
 
 ## Belt changes and history folders
 
