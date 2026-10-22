@@ -56,7 +56,7 @@ const CONFIG = {
 const TRACKER_FIELDS = {"IMPACT_Black":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3"]]},"IMPACT_Blue":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"],["Dropdown25","Dropdown35","Dropdown45"]]},"IMPACT_Brown":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55","Dropdown65","Dropdown75","Dropdown85"],["Dropdown16","Dropdown26","Dropdown36","Dropdown46","Dropdown56","Dropdown66"],["Dropdown17","Dropdown27","Dropdown37","Dropdown47","Dropdown57","Dropdown67"],["Dropdown18","Dropdown28","Dropdown38","Dropdown58","Dropdown68"],["Dropdown19","Dropdown29","Dropdown39","Dropdown49","Dropdown59"],["Dropdown1A","Dropdown2A","Dropdown3A","Dropdown4A","Dropdown4A","Dropdown5A"]]},"IMPACT_Green":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44"]]},"IMPACT_Orange":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"]]},"IMPACT_Purple":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55"]]},"IMPACT_Red":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"]]},"IMPACT_White":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"]]},"IMPACT_Yellow":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown53"]]},"UNITY_Bronze":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"1"},{"status":"Dropdown16","note":"2"},{"status":"Dropdown17","note":"undefined_15"},{"status":"Dropdown18","note":"undefined_16"},{"status":"Dropdown19","note":"undefined_17"},{"status":"Dropdown20","note":"undefined_18"}]},"UNITY_Gold":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"}]},"UNITY_Platinum":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"}]},"UNITY_Silver":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"undefined_15"},{"status":"Dropdown16","note":"undefined_16"},{"status":"Dropdown17","note":"undefined_17"},{"status":"Dropdown18","note":"undefined_18"},{"status":"Dropdown19","note":"undefined_19"},{"status":"Dropdown20","note":"undefined_20"},{"status":"Dropdown21","note":"undefined_21"},{"status":"Dropdown22","note":"undefined_22"},{"status":"Dropdown23","note":"undefined_23"},{"status":"Dropdown24","note":"undefined_24"},{"status":"Dropdown25","note":"undefined_25"},{"status":"Dropdown26","note":"undefined_26"},{"status":"Dropdown27","note":"undefined_27"},{"status":"Dropdown28","note":"undefined_28"},{"status":"Dropdown29","note":"undefined_29"},{"status":"Dropdown30","note":"undefined_30"},{"status":"Dropdown31","note":"undefined_31"},{"status":"Dropdown32","note":"undefined_32"}]},"CS_1":{"type":"CS1","rows":[{"check":"Check Box1","date":"Date9_af_date","by":"Text10"},{"check":"Check Box2","date":"Date11_af_date","by":"Text18"},{"check":"Check Box3","date":"Date12_af_date","by":"Text19"},{"check":"Check Box4","date":"Date13_af_date","by":"Text20"},{"check":"Check Box5","date":"Date14_af_date","by":"Text21"},{"check":"Check Box6","date":"Date15_af_date","by":"Text22"},{"check":"Check Box7","date":"Date16_af_date","by":"Text23"},{"check":"Check Box8","date":"Date17_af_date","by":"Text24"},{"check":"Check Box25","date":"Date33_af_date","by":"Text41"},{"check":"Check Box26","date":"Date34_af_date","by":"Text42"},{"check":"Check Box27","date":"Date35_af_date","by":"Text43"},{"check":"Check Box28","date":"Date36_af_date","by":"Text44"},{"check":"Check Box29","date":"Date37_af_date","by":"Text45"},{"check":"Check Box30","date":"Date38_af_date","by":"Text46"},{"check":"Check Box31","date":"Date39_af_date","by":"Text47"},{"check":"Check Box32","date":"Date40_af_date","by":"Text48"},{"check":"Check Box49","date":"Date57_af_date","by":"Text65"},{"check":"Check Box50","date":"Date58_af_date","by":"Text66"},{"check":"Check Box51","date":"Date59_af_date","by":"Text67"},{"check":"Check Box52","date":"Date60_af_date","by":"Text68"},{"check":"Check Box53","date":"Date61_af_date","by":"Text69"},{"check":"Check Box54","date":"Date62_af_date","by":"Text70"},{"check":"Check Box55","date":"Date63_af_date","by":"Text71"},{"check":"Check Box56","date":"Date64_af_date","by":"Text72"},{"check":"Check Box73","date":"Date81_af_date","by":"Text89"},{"check":"Check Box74","date":"Date82_af_date","by":"Text90"},{"check":"Check Box75","date":"Date83_af_date","by":"Text91"},{"check":"Check Box76","date":"Date84_af_date","by":"Text92"},{"check":"Check Box77","date":"Date85_af_date","by":"Text93"},{"check":"Check Box78","date":"Date86_af_date","by":"Text94"},{"check":"Check Box79","date":"Date87_af_date","by":"Text95"},{"check":"Check Box80","date":"Date88_af_date","by":"Text96"},{"check":"Check Box97","date":"Date105_af_date","by":"Text113"},{"check":"Check Box98","date":"Date106_af_date","by":"Text114"},{"check":"Check Box99","date":"Date107_af_date","by":"Text115"},{"check":"Check Box100","date":"Date108_af_date","by":"Text116"},{"check":"Check Box101","date":"Date109_af_date","by":"Text117"},{"check":"Check Box102","date":"Date110_af_date","by":"Text118"},{"check":"Check Box103","date":"Date111_af_date","by":"Text119"},{"check":"Check Box104","date":"Date112_af_date","by":"Text120"},{"check":"Check Box121","date":"Date129_af_date","by":"Text137"},{"check":"Check Box122","date":"Date130_af_date","by":"Text138"},{"check":"Check Box123","date":"Date131_af_date","by":"Text139"},{"check":"Check Box124","date":"Date132_af_date","by":"Text140"},{"check":"Check Box125","date":"Date133_af_date","by":"Text141"},{"check":"Check Box126","date":"Date134_af_date","by":"Text142"},{"check":"Check Box127","date":"Date135_af_date","by":"Text143"},{"check":"Check Box128","date":"Date136_af_date","by":"Text144"},{"check":"Check Box145","date":"Date153_af_date","by":"Text161"},{"check":"Check Box146","date":"Date154_af_date","by":"Text162"},{"check":"Check Box147","date":"Date155_af_date","by":"Text163"},{"check":"Check Box148","date":"Date156_af_date","by":"Text164"},{"check":"Check Box149","date":"Date157_af_date","by":"Text165"},{"check":"Check Box150","date":"Date158_af_date","by":"Text166"},{"check":"Check Box151","date":"Date159_af_date","by":"Text167"},{"check":"Check Box152","date":"Date160_af_date","by":"Text168"}]},"JR":{"type":"JR","rows":[{"date":"Date3_af_date","stars":["Check Box5","Check Box6","Check Box7"],"comment":"Text8"},{"date":"Date4_af_date","stars":["Check Box8","Check Box9","Check Box10"],"comment":"Text10"},{"date":"Date5_af_date","stars":["Check Box12","Check Box13","Check Box14"],"comment":"Text11"},{"date":"Date6_af_date","stars":["Check Box15","Check Box16","Check Box17"],"comment":"Text12"},{"date":"Date7_af_date","stars":["Check Box18","Check Box19","Check Box20"],"comment":"Text13"},{"date":"Date203_af_date","stars":["Check Box205","Check Box206","Check Box207"],"comment":"Text208"},{"date":"Date204_af_date","stars":["Check Box208","Check Box209","Check Box2010"],"comment":"Text2010"},{"date":"Date205_af_date","stars":["Check Box2012","Check Box2013","Check Box2014"],"comment":"Text2011"},{"date":"Date206_af_date","stars":["Check Box2015","Check Box2016","Check Box2017"],"comment":"Text2012"},{"date":"Date207_af_date","stars":["Check Box2018","Check Box2019","Check Box2020"],"comment":"Text2013"},{"date":"Date303_af_date","stars":["Check Box305","Check Box306","Check Box307"],"comment":"Text308"},{"date":"Date304_af_date","stars":["Check Box308","Check Box309","Check Box3010"],"comment":"Text3010"},{"date":"Date305_af_date","stars":["Check Box3012","Check Box3013","Check Box3014"],"comment":"Text3011"},{"date":"Date306_af_date","stars":["Check Box3015","Check Box3016","Check Box3017"],"comment":"Text3012"},{"date":"Date307_af_date","stars":["Check Box3018","Check Box3019","Check Box3020"],"comment":"Text3013"},{"date":"Date403_af_date","stars":["Check Box405","Check Box406","Check Box407"],"comment":"Text408"},{"date":"Date404_af_date","stars":["Check Box408","Check Box409","Check Box4010"],"comment":"Text4010"},{"date":"Date405_af_date","stars":["Check Box4012","Check Box4013","Check Box4014"],"comment":"Text4011"},{"date":"Date406_af_date","stars":["Check Box4015","Check Box4016","Check Box4017"],"comment":"Text4012"},{"date":"Date407_af_date","stars":["Check Box4018","Check Box4019","Check Box4020"],"comment":"Text4013"},{"date":"Date503_af_date","stars":["Check Box505","Check Box506","Check Box507"],"comment":"Text508"},{"date":"Date504_af_date","stars":["Check Box508","Check Box509","Check Box5010"],"comment":"Text5010"},{"date":"Date505_af_date","stars":["Check Box5012","Check Box5013","Check Box5014"],"comment":"Text5011"},{"date":"Date506_af_date","stars":["Check Box5015","Check Box5016","Check Box5017"],"comment":"Text5012"},{"date":"Date507_af_date","stars":["Check Box5018","Check Box5019","Check Box5020"],"comment":"Text5013"},{"date":"Date603_af_date","stars":["Check Box605","Check Box606","Check Box607"],"comment":"Text608"},{"date":"Date604_af_date","stars":["Check Box608","Check Box609","Check Box6010"],"comment":"Text6010"},{"date":"Date605_af_date","stars":["Check Box6012","Check Box6013","Check Box6014"],"comment":"Text6011"},{"date":"Date606_af_date","stars":["Check Box6015","Check Box6016","Check Box6017"],"comment":"Text6012"},{"date":"Date607_af_date","stars":["Check Box6018","Check Box6019","Check Box6020"],"comment":"Text6013"},{"date":"Date703_af_date","stars":["Check Box705","Check Box706","Check Box707"],"comment":"Text708"},{"date":"Date704_af_date","stars":["Check Box708","Check Box709","Check Box7010"],"comment":"Text7010"},{"date":"Date705_af_date","stars":["Check Box7012","Check Box7013","Check Box7014"],"comment":"Text7011"},{"date":"Date706_af_date","stars":["Check Box7015","Check Box7016","Check Box7017"],"comment":"Text7012"},{"date":"Date707_af_date","stars":["Check Box7018","Check Box7019","Check Box7020"],"comment":"Text7013"},{"date":"Date803_af_date","stars":["Check Box805","Check Box806","Check Box807"],"comment":"Text808"},{"date":"Date804_af_date","stars":["Check Box808","Check Box809","Check Box8010"],"comment":"Text8010"},{"date":"Date805_af_date","stars":["Check Box8012","Check Box8013","Check Box8014"],"comment":"Text8011"},{"date":"Date806_af_date","stars":["Check Box8015","Check Box8016","Check Box8017"],"comment":"Text8012"},{"date":"Date807_af_date","stars":["Check Box8018","Check Box8019","Check Box8020"],"comment":"Text8013"}]}};
 
 var PDF_LIB_CACHE_ = null;
-const TRACKER_GENERATOR_VERSION_ = 'v22';
+const TRACKER_GENERATOR_VERSION_ = 'v23';
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Tracker PDFs')
@@ -255,13 +255,18 @@ function openTrackerPopup() {
       <label>Notes for the PDF</label>
       <textarea id="notes" maxlength="180" placeholder="Session notes">${escapeHtml_(notes)}</textarea>
     </div>
-    <p id="dayHelp" class="muted" hidden>Only the Sensei name is needed. Each student uses their own belt and project from columns D/E with the default note "Working on [project]!". Current activity is always <b>W</b> (in progress). Unity gets no default note. Scratch Jr stars remain unchanged.</p>
+    <p id="dayHelp" class="muted" hidden>Keep this dialog open until the run finishes. Each student uses their own belt and project from columns D/E with the default note "Working on [project]!". Current activity is always <b>W</b> (in progress). Unity gets no default note. Scratch Jr stars remain unchanged.</p>
     <div class="actions"><button class="secondary" id="back" onclick="goBack()">Back</button>
       <button class="primary" id="submit" onclick="submitCards()">${escapeHtml_(safeAction)}</button></div>
-    <div id="summary"></div><div id="results"></div>
+    <div id="summary" role="status" aria-live="polite"></div>
+    <progress id="dayProgress" value="0" max="${dayRows.length}" style="width:100%" hidden></progress>
+    <div id="currentAction" class="muted" role="status" aria-live="polite"></div>
+    <div id="results"></div>
+    <button class="secondary" id="done" hidden onclick="google.script.host.close()">Close</button>
   </div>
   <script>
   const rows=${JSON.stringify(dayRows)};
+  const studentNames=${JSON.stringify(Object.fromEntries(names.map((r,i)=>[i+3,r[0].trim()])))};
   const chosenRow=${selectedRow};
   const selectedName=${JSON.stringify(selectedName)};
   const tab=${JSON.stringify(sh.getName())};
@@ -273,6 +278,7 @@ function openTrackerPopup() {
   const undoTab=${JSON.stringify(undoTab)};
   const undoPreview=${JSON.stringify(undoPreview)};
   let scope='selected', completed=0, failed=0, cursor=0, running=false, undoBusy=false;
+  let progressTimer=null,activeDayRun=null;
   const el=id=>document.getElementById(id);
   function undoFromPopup(){
     if (running || undoBusy || !undoId || !undoCount) return;
@@ -311,13 +317,14 @@ function openTrackerPopup() {
     el('detailTitle').textContent=scope==='selected'?'Selected student: '+selectedName:'Entire day: '+rows.length+' students';
     el('singleFields').hidden=scope==='day';el('dayHelp').hidden=scope!=='day';
     el('summary').textContent='';el('results').textContent='';
+    el('dayProgress').hidden=scope!=='day';el('dayProgress').value=0;el('currentAction').textContent='';el('done').hidden=true;
   }
   function goBack(){if(running||undoBusy)return;el('details').hidden=true;el('choose').hidden=false;}
   function addResult(label,url,isError){
     const line=document.createElement('div');
     if(isError)line.className='error';
     line.appendChild(document.createTextNode(label));
-    if(url){ const a=document.createElement('a');a.textContent=' Open PDF';a.target='_blank';a.href=url;line.appendChild(a);}
+    if(url){ const a=document.createElement('a');a.textContent=' Open tracker';a.target='_blank';a.href=url;line.appendChild(a);}
     el('results').appendChild(line);
   }
   function buttonsDisabled(disabled){el('submit').disabled=disabled;el('back').disabled=disabled;}
@@ -330,6 +337,7 @@ function openTrackerPopup() {
     if(cs1Index!==null && !cs1Date){el('summary').textContent='Choose a completion date.';return;}
     if(!s){el('summary').textContent='Enter a Sensei name.';return;}
     running=true;buttonsDisabled(true);completed=0;failed=0;cursor=0;el('results').textContent='';
+    el('done').hidden=true;el('dayProgress').value=0;
     if(scope==='selected') {
       el('summary').textContent='Processing student... You can close this dialog now.';
       google.script.run.withSuccessHandler(r=>{
@@ -339,35 +347,59 @@ function openTrackerPopup() {
         el('summary').textContent='Error: '+e.message;
       }).generateFromPopup(tab,chosenRow,s,stars,el('notes').value.trim(),cs1Index,cs1Date);
     } else {
-      el('summary').textContent='Preparing batch...';
+      el('summary').textContent='Preparing whole-day update...';
+      el('currentAction').textContent='Checking trackers and any new belts that need confirmation.';
       google.script.run.withSuccessHandler(runId=>{
-        if(!runId){running=false;buttonsDisabled(false);el('summary').textContent='Cancelled. No trackers changed.';return;}
+        if(!runId){running=false;buttonsDisabled(false);el('summary').textContent='Cancelled. No trackers changed.';el('currentAction').textContent='';el('done').hidden=false;return;}
+        activeDayRun=runId;pollDayProgress(runId);
         processNextBatch(s,runId);
       })
-        .withFailureHandler(e=>{running=false;buttonsDisabled(false);el('summary').textContent='Error: '+e.message;})
-        .beginDayTrackerRun_(tab);
+        .withFailureHandler(e=>{running=false;buttonsDisabled(false);el('summary').textContent='Could not start: '+e.message;el('currentAction').textContent='';el('done').hidden=false;})
+        .beginDayTrackerRun(tab);
     }
+  }
+  function stopDayProgress(){
+    activeDayRun=null;
+    if(progressTimer!==null){clearTimeout(progressTimer);progressTimer=null;}
+  }
+  function pollDayProgress(runId){
+    if(!running || activeDayRun!==runId)return;
+    const again=()=>{
+      if(running && activeDayRun===runId)progressTimer=setTimeout(()=>pollDayProgress(runId),1500);
+    };
+    google.script.run.withSuccessHandler(progress=>{
+      if(!running || activeDayRun!==runId)return;
+      if(progress && progress.name && progress.row===rows[cursor])
+        el('currentAction').textContent=progress.name+' — '+progress.stage;
+      again();
+    }).withFailureHandler(()=>again()).getDayTrackerProgress(tab,runId);
   }
   function processNextBatch(s,runId){
     if(cursor>=rows.length){
-      running=false;buttonsDisabled(false);
-      if(failed===0){ google.script.host.close(); return; }
-      el('summary').textContent='Finished: '+completed+' updated, '+failed+' failed. Review the errors below.';
+      running=false;stopDayProgress();buttonsDisabled(false);
+      el('dayProgress').value=rows.length;
+      el('summary').textContent='Finished: '+completed+' updated, '+failed+' failed — '+cursor+' of '+rows.length+' students processed.';
+      el('currentAction').textContent=failed?'Review the failed students below.':'All tracker updates are complete.';
+      el('done').hidden=false;
       return;
     }
-    const batch=rows.slice(cursor,cursor+2);
-    el('summary').textContent='Processing '+Math.min(cursor+batch.length,rows.length)+' of '+rows.length+'...';
+    const batch=rows.slice(cursor,cursor+1);
+    el('summary').textContent=cursor+' of '+rows.length+' finished — '+completed+' updated, '+failed+' failed.';
+    el('currentAction').textContent='Starting '+(studentNames[batch[0]]||'row '+batch[0])+'...';
     google.script.run.withSuccessHandler(results=>{
       results.forEach(r=>{
         if(r.ok)completed++;else failed++;
-        addResult('Row '+r.row+' — '+r.name+(r.ok?'':' — '+r.error),r.url||'',!r.ok);
+        addResult('Row '+r.row+' — '+r.name+' — '+(r.ok?(r.message||'Updated'):r.error),r.url||'',!r.ok);
       });
       cursor+=batch.length;
+      el('dayProgress').value=cursor;
       processNextBatch(s,runId);
     }).withFailureHandler(e=>{
-      running=false;buttonsDisabled(false);
-      el('summary').textContent='Stopped after '+cursor+' rows. Error: '+e.message+'. You can run again after fixing the issue.';
-    }).generateDayBatch_(tab,batch,s,runId);
+      running=false;stopDayProgress();buttonsDisabled(false);
+      el('summary').textContent='Stopped: '+cursor+' of '+rows.length+' processed — '+completed+' updated, '+failed+' failed.';
+      el('currentAction').textContent='Error: '+e.message;
+      el('done').hidden=false;
+    }).generateDayBatch(tab,batch,s,runId);
   }
   </script></body></html>`;
   SpreadsheetApp.getUi().showModalDialog(
@@ -377,20 +409,26 @@ function openTrackerPopup() {
 
 // Ask only when a new belt/template is needed. Do this before taking a lock:
 // Apps Script alert dialogs suspend execution and do not retain LockService locks.
-function confirmNewTrackerBelts_(sheet,rows) {
+function confirmNewTrackerBelts_(sheet,rows,allowRowErrors=false) {
   const additions=[];
   for(const row of rows) {
-    const values=sheet.getRange(row,1,1,5).getDisplayValues()[0];
-    const student=values[0].trim(),inputCourse=values[3].trim();
-    if(!student || !inputCourse) continue;
-    const course=getCurriculum_(sheet.getParent(),inputCourse).course;
-    const jr=course==='JR'?getLink_(sheet.getRange(row,10)):'';
-    const location=locateTracker_(jr||getLink_(sheet.getRange(row,9)),course,student);
-    if(!location.file || programFromName_(location.file.getName())!==course) {
-      additions.push(student+' — '+course+(location.folder?
-        ': add the new tracker to the existing folder.':
-        ': create a folder named "'+student+'" with the new tracker'+
-        (location.file?' and a copy of the old tracker.':'.')));
+    try {
+      const values=sheet.getRange(row,1,1,5).getDisplayValues()[0];
+      const student=values[0].trim(),inputCourse=values[3].trim();
+      if(!student || !inputCourse) continue;
+      const course=getCurriculum_(sheet.getParent(),inputCourse).course;
+      const jr=course==='JR'?getLink_(sheet.getRange(row,10)):'';
+      const location=locateTracker_(jr||getLink_(sheet.getRange(row,9)),course,student);
+      if(!location.file || programFromName_(location.file.getName())!==course) {
+        additions.push(student+' — '+course+(location.folder?
+          ': add the new tracker to the existing folder.':
+          ': create a folder named "'+student+'" with the new tracker'+
+          (location.file?' and a copy of the old tracker.':'.')));
+      }
+    } catch(error) {
+      // Day generation reports this row's error and continues with other students.
+      if(!allowRowErrors) throw error;
+      console.warn('Row '+row+' will be reported during generation: '+error.message);
     }
   }
   if(!additions.length) return true;
@@ -424,18 +462,43 @@ async function generateFromPopup(tabName,row,sensei,stars,notes,cs1CompleteIndex
   } finally {lock.releaseLock();}
 }
 
+// HTML-service clients cannot call server functions ending in an underscore.
+function beginDayTrackerRun(tabName) { return beginDayTrackerRun_(tabName); }
+async function generateDayBatch(tabName,rowNumbers,sensei,runId) {
+  return await generateDayBatch_(tabName,rowNumbers,sensei,runId);
+}
+function dayTrackerProgressKey_() {
+  return 'TRACKER_DAY_PROGRESS_'+SpreadsheetApp.getActiveSpreadsheet().getId();
+}
+function reportDayTrackerProgress_(runId,tab,row,name,stage) {
+  try {
+    PropertiesService.getScriptProperties().setProperty(dayTrackerProgressKey_(),
+      JSON.stringify({runId,tab,row,name,stage,updated:new Date().toISOString()}));
+  } catch(error) {console.warn('Progress display could not update: '+error.message);}
+}
+function getDayTrackerProgress(tabName,runId) {
+  const run=lastTrackerRun_();
+  if(!run || run.id!==runId || run.tab!==tabName) return null;
+  const text=PropertiesService.getScriptProperties().getProperty(dayTrackerProgressKey_());
+  if(!text)return null;
+  try {const progress=JSON.parse(text);return progress.runId===runId && progress.tab===tabName?progress:null;}
+  catch(error){return null;}
+}
+
 // Begin a single undoable operation across the multiple server calls of a day batch.
 function beginDayTrackerRun_(tabName) {
   const sh=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(tabName);
   if(!sh || !isDailyTab_(tabName)) throw new Error('Invalid daily tab.');
   const rows=[];
   for(let row=3;row<=sh.getLastRow();row++) if(sh.getRange(row,1).getDisplayValue().trim()) rows.push(row);
-  if(!confirmNewTrackerBelts_(sh,rows)) return null;
+  if(!confirmNewTrackerBelts_(sh,rows,true)) return null;
   const lock=LockService.getDocumentLock()||LockService.getScriptLock();
   lock.waitLock(30000);
   try {
     ensurePdfStatusColumn_(sh);
-    return beginTrackerRun_(tabName);
+    const runId=beginTrackerRun_(tabName);
+    reportDayTrackerProgress_(runId,tabName,0,'','Preparing students');
+    return runId;
   } finally {lock.releaseLock();}
 }
 
@@ -456,14 +519,16 @@ async function generateDayBatch_(tabName,rowNumbers,sensei,runId) {
         results.push({row,name:'Unknown',ok:false,error:'Invalid student row'});continue;
       }
       const name=sh.getRange(row,1).getDisplayValue().trim();
-      if(!name) continue;
+      if(!name){results.push({row,name:'Empty student row',ok:false,error:'Student name was removed.'});continue;}
       try {
         const project=sh.getRange(row,5).getDisplayValue();
         const course=sh.getRange(row,4).getDisplayValue();
         const note=getSuggestedNote_(sh,row,project,course);
-        const r=await generateForRow_(sh,row,'W',0,{sensei,notes:note,runId});
-        results.push({row,name,ok:true,url:r.url});
+        const r=await generateForRow_(sh,row,'W',0,{sensei,notes:note,runId,
+          onProgress:stage=>reportDayTrackerProgress_(runId,tabName,row,name,stage)});
+        results.push({row,name,ok:true,url:r.url,message:r.message});
       } catch(e) {
+        reportDayTrackerProgress_(runId,tabName,row,name,'Failed: '+e.message);
         setTrackerIndicator_(sh,row,'FAILED',String(e.message||e));
         results.push({row,name,ok:false,error:String(e.message||e)});
       }
@@ -645,14 +710,17 @@ function shareTrackerViewLinks_(file,folder) {
   } else if(file) allowViewing(file);
 }
 
-function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLink,previousBytes,previousName) {
+function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLink,previousBytes,previousName,onProgress=()=>{}) {
   const source=location.file;
   if(!createNew) {
+    onProgress('Backing up the current tracker');
     const backup=getUndoFolder_().createFile(Utilities.newBlob(previousBytes,'application/pdf','BACKUP '+Date.now()+' '+previousName));
     if(!backup.getId()) throw new Error('Backup failed. Original PDF not changed.');
     let updated=false;
     try {
+      onProgress('Enabling anyone-with-link viewing');
       shareTrackerViewLinks_(source,location.folder);
+      onProgress('Uploading the updated PDF');
       updateDrivePdf_(source.getId(),blob);
       updated=true;
       if(record.fileName!==previousName) source.setName(record.fileName);
@@ -670,6 +738,7 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
   const linkState={previousLink,linkFormula:cell.getFormula(),linkText:cell.getDisplayValue()};
   try {
     if(!folder) {
+      onProgress('Creating the student folder and keeping the old tracker');
       const parents=source?source.getParents():null;
       folder=parents && parents.hasNext()?parents.next().createFolder(record.student):
         DriveApp.createFolder(record.student);
@@ -679,11 +748,14 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
       // Historical preview prefixes would make folder lookup skip this belt.
       if(source) archive=source.makeCopy(oldCourse?trackerFilename_(record.student,oldCourse):previousName,folder);
     }
+    onProgress('Creating the new belt PDF');
     created=folder.createFile(blob);
     if(!created.getId()) throw new Error('Could not create the new belt tracker.');
     // Share the folder and every belt PDF, including the archived old tracker.
     // Do this before publishing its link or marking the operation successful.
+    onProgress('Enabling anyone-with-link viewing');
     shareTrackerViewLinks_(created,folder);
+    onProgress('Updating the tracker link in the journal');
     const folderUrl=folder.getUrl();
     linkChanged=true;
     cell.setValue(folderUrl);
@@ -1115,6 +1187,7 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const notes=String(overrides && overrides.notes !== undefined
     ? overrides.notes : defaultProjectNote_(project,inputCourse)).trim();
   const runId=overrides && overrides.runId;
+  const progress=overrides && typeof overrides.onProgress==='function'?overrides.onProgress:()=>{};
   if(!student || !inputCourse || !project || !sensei)
     throw new Error('Missing student A, program D, project E, or popup Sensei.');
   if(!runId) throw new Error('Undo session was not initialized. Use the Generate PDF popup.');
@@ -1139,6 +1212,7 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   if(meta.type!=='JR') stars=0;
 
   setTrackerIndicator_(sh,row,'GENERATING','Updating '+student+' / '+project);
+  progress('Finding the student tracker');
   const location=locateTracker_(trackerUrl,course,student);
   const source=location.file;
   if(source && Object.values(CONFIG.TEMPLATES).includes(source.getId()))
@@ -1146,11 +1220,13 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const previousName=source ? source.getName() : '';
   const previousBytes=source ? source.getBlob().getBytes() : null;
   const lib=getPdfLib_();
+  progress('Loading the PDF and checking its belt');
   const prepared=await prepareTrackerPdf_(source,previousBytes,course,student,lib);
   const pdf=prepared.pdf;
   const form=pdf.getForm(), warnings=[];
   const createNew=!source || prepared.replaced;
   const outputName=prepared.replaced || !source ? trackerFilename_(student,course) : previousName;
+  progress('Filling project markers and notes');
   if(meta.type==='IMPACT') applyImpact_(form,meta,course,task,curriculum.tasks,status,sensei,date,student,notes,warnings);
   else if(meta.type==='UNITY') applyUnity_(form,meta,idx,status,sensei,date,student,notes,warnings);
   else if(meta.type==='CS1') {
@@ -1160,6 +1236,7 @@ async function generateForRow_(sh,row,status,stars,overrides) {
     if(idx>=40) throw new Error('Scratch Jr tracker supports only 40 activities, not #'+(idx+1));
     applyJR_(form,meta,idx,status,stars,sensei,date,student,notes,warnings);
   }
+  progress('Saving and validating PDF markers');
   // Snapshot the complete set of IMPACT/Unity progress values before serialization.
   // Verification below checks every field, not only the current W.
   const expectedProgress = (meta.type==='IMPACT' || meta.type==='UNITY')
@@ -1201,10 +1278,11 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const record={tab:sh.getName(),row,student,project:task,statusBefore,
     fileName:outputName,afterHash:hashPdfBytes_(blob.getBytes())};
   const result=persistTrackerPdf_(location,blob,record,runId,createNew,
-    sh.getRange(row,trackerCol==='J'?10:9),trackerUrl,previousBytes,previousName);
+    sh.getRange(row,trackerCol==='J'?10:9),trackerUrl,previousBytes,previousName,progress);
   setTrackerIndicator_(sh,row,'PDF UPDATED',
     'Updated '+outputName+' on '+date.short+' using '+TRACKER_GENERATOR_VERSION_+
     '. Undo available from Tracker PDFs menu.');
+  progress('Completed');
   return {
     url:result.url,message:(createNew?'Created tracker in folder.':prepared.replaced?'Replaced tracker with '+course+' template.':'Updated existing tracker PDF.')+
       (warnings.length?' Warnings: '+warnings.join(' | '):'')

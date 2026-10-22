@@ -232,3 +232,23 @@ test('sharing failure prevents success and cleans newly generated files without 
   assert.equal(h.records.length,0);assert.equal(h.link,h.originalLink);assert.deepEqual(h.source.bytes,before);
   assert.equal([...h.folders.values()].filter(f=>f.name==='Naveed F'&&!f.trashed).length,0);
 });
+
+test('public whole-day entry points generate a real PDF and expose processing stages to the dialog',async()=>{
+  const h=await harness();const values=new Map(),stages=[];
+  h.ss.getId=()=> 'journal';
+  h.c.SpreadsheetApp={getActiveSpreadsheet:()=>h.ss};
+  h.c.PropertiesService={getScriptProperties:()=>({setProperty:(key,value)=>{
+    values.set(key,value);if(key.startsWith('TRACKER_DAY_PROGRESS'))stages.push(JSON.parse(value).stage);
+  },getProperty:key=>values.get(key)})};
+  h.c.LockService={getDocumentLock:()=>({waitLock(){},releaseLock(){}})};
+  h.c.confirmNewTrackerBelts_=()=>true;h.c.ensurePdfStatusColumn_=()=>{};
+  h.c.beginTrackerRun_=()=> 'run';h.c.lastTrackerRun_=()=>({id:'run',tab:'10-10'});
+  h.c.getSuggestedNote_=()=> 'Working on Lvl 1 Build 1!';
+  assert.equal(h.c.beginDayTrackerRun('10-10'),'run');
+  const results=await h.c.generateDayBatch('10-10',[3],'Amber','run');
+  assert.equal(results.length,1);assert.equal(results[0].ok,true);assert.match(results[0].message,/Created tracker/);
+  const progress=h.c.getDayTrackerProgress('10-10','run');
+  assert.equal(progress.name,'Naveed F');assert.equal(progress.stage,'Completed');
+  for(const expected of ['Finding the student tracker','Filling project markers and notes','Saving and validating PDF markers',
+    'Creating the student folder and keeping the old tracker','Enabling anyone-with-link viewing','Completed'])assert.ok(stages.includes(expected),expected);
+});

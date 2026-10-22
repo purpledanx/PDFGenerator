@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v22** after replacing the script and reloading the
+The popup title should show **v23** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -56,6 +56,20 @@ belt PDFs as well. Templates and Undo backups are not explicitly shared.
 If Google rejects the sharing change, generation reports an error rather than
 marking the tracker updated. Undo restores tracker content/links; it does not
 revoke link viewing on existing files or folders.
+
+## Whole-day progress
+
+The whole-day dialog stays open until you close it. It shows the completed
+student count, current student's name and processing stage, a progress bar, and
+per-student tracker links or errors. At the end it shows updated/failed totals
+and a Close button. Student-level failures do not prevent other students from
+being processed. A failed server request stops the run with the error visible.
+
+Progress stages include finding the tracker, filling markers, validating saved
+values, backing up or creating PDFs, enabling link viewing, and updating the
+journal link. Stages are read periodically while each student is processed.
+The dialog uses public Apps Script entry points; private functions ending in
+an underscore are not callable from HTML-service clients.
 
 ## Email links
 
