@@ -1,14 +1,17 @@
 # PDFGenerator
 
-Google Apps Script updater for existing student tracker PDFs. `PDFGenerator.gs`
-contains the supplied script with progress reconciliation fixes.
+Google Apps Script journal, parent email, and student tracker PDF workflow.
+`PDFGenerator.gs` generates trackers; `Code.gs` contains the corrected journal
+and email script. Keep both files in the same Apps Script project.
 
 ## Apply the fix
 
 In the journal's Apps Script project, replace the existing PDFGenerator script
-with `PDFGenerator.gs`. Keep the journal's separate `Code.gs` unchanged. Replace
-the old generator file rather than adding a second copy with duplicate functions
-and constants. Save, then reload the spreadsheet.
+with `PDFGenerator.gs`. For the journal/email fixes, replace the existing
+`Code.gs` with this repository's `Code.gs` as well. Replace existing contents
+rather than adding second copies with duplicate functions and constants.
+Keep the existing HTML templates and other project files. Save, then reload
+the spreadsheet. No emails are sent by saving these files.
 
 Set the student's program in column D and current project in E. Use
 **Tracker PDFs → Generate / Update Tracker** to update the PDF linked in I
@@ -54,18 +57,36 @@ With a folder URL, the tracker link opens that folder, where parents can select
 the current or earlier belts. It does not automatically select or attach a PDF.
 The HTML template must use these properties as its links.
 
-To support plain URLs, HYPERLINK formulas, and linked cell labels, replace these
-two assignments inside your existing `sendEmails` function:
+The replacement `Code.gs` reads plain URLs, HYPERLINK formulas, and linked labels.
+After a successful email, it saves I/J into Clients C/D along with the student's
+progress. The next session therefore loads the saved history folder URL.
+`saveClientsProgress` and `reupdateClientsProgress` also persist those links.
 
-```js
-const trackerLink = getLink_(monthDay.getRange(i, TRACKER_COL));
-const jrLink = getLink_(monthDay.getRange(i, JR_TRACKER_COL));
-```
+Only rows with K checked and L exactly `NOT SENT` are eligible. For IMPACT, Unity,
+CS_1 and JR, N must be `PDF UPDATED` and N1 must be `PDF STATUS`. Fundamentals
+keeps its existing workflow because the PDF generator does not support it.
+Every eligible row is validated and its HTML rendered before any email is sent;
+an invalid row blocks the batch with row-specific errors. The existing HTML
+templates (`impact`, `belts`, `scratchJr`, `cs1AndFundamentals`) must still exist.
+Generating a PDF does not send email or reset an `EMAIL SENT` status.
 
-`getLink_` is provided in `PDFGenerator.gs` in the same Apps Script project. Leave
-the rest of `sendEmails` unchanged. Generating PDFs does not send emails or reset
-an EMAIL SENT status. Your existing ready/pending checks still control sending.
-No email has been sent as part of this change.
+`sendEmails(true)` asks for confirmation and Cancel stops the operation.
+`sendEmails()` retains the existing behavior of sending without a dialog. Both
+use the selected journal tab's date and the year in the spreadsheet filename.
+If Courses A2 contains a subject with `<ninja>`, `<level>` or `<date>`, it is used;
+when A2 is a curriculum project under a course heading, a standard progress
+subject is used instead. This avoids sending a project title as the subject.
+
+Course names are read from Courses row 1; projects start at row 2 under the
+matching heading. Clients data starts at row 2 and daily journal students at row
+3. Editing any dated journal tab loads student details, including older dates.
+Choosing another student clears the old current belt/project, resets readiness,
+and marks the PDF stale. Changing the belt clears an old project unless the edit
+explicitly pastes a replacement project too. Multi-row edits are supported.
+
+Rebuilding Clients processes tabs by session date, oldest first, so later
+sessions win regardless of tab order. Blank values do not erase existing saved
+progress or links. No live email has been sent as part of developing this change.
 
 Blue numbered Solve projects map directly to the printed wrench fields, regardless
 of Courses list order. Earlier activities become C and earlier levels receive L.
@@ -83,7 +104,9 @@ npm ci --cache /tmp/pdfgenerator-npm-cache --no-audit --no-fund
 npm test
 ```
 
-The tests create editable PDF fixtures with pdf-lib 1.17.1, move projects forward
+The tests simulate journal edits and email sending, exercise link persistence,
+confirmation, PDF readiness, subject dates, dropdowns and chronological saving.
+They also create editable PDF fixtures with pdf-lib 1.17.1, move projects forward
 and backward, and save/reopen PDFs to check marker values and visible appearance
 streams. No local server is required. Live spreadsheet, Drive, and undo operations
 must be checked in the authorized Google Apps Script runtime; these tests do not
