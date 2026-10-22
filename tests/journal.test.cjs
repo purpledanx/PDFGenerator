@@ -40,11 +40,12 @@ function harness(rows=[row()]){
   const courses=new Sheet('Courses',[['CS_1','Fundamentals','IMPACT_Orange','IMPACT_Blue'],
     ['<ninja> / <level> / <date>','Maze','Lvl 4 Build 1','Lvl 5 Solve 1'],
     ['CS1 Project','Hide and Seek','Lvl 4 Build 2','Lvl 5 Solve 2']]);
-  const sent=[],rendered=[],locks=[];let response='OK',active=daily,sendFailure=false;
+  const sent=[],rendered=[],locks=[],notices=[];let response='OK',active=daily,sendFailure=false;
   const sheets=[daily,clients,courses];
-  const ss={getName:()=> 'Journal 10-2026',getActiveSheet:()=>active,getSheetByName:name=>sheets.find(s=>s.name===name),getSheets:()=>sheets};
+  const ss={getName:()=> 'Journal 10-2026',getActiveSheet:()=>active,getSheetByName:name=>sheets.find(s=>s.name===name),getSheets:()=>sheets,
+    toast:(message,title)=>notices.push({message,title})};
   for(const sheet of sheets)sheet.parent=ss;
-  const c=vm.createContext({});
+  const c=vm.createContext({console:{log(){},error(){}}});
   const validation=()=>{const v={requireValueInList:values=>{v.values=Array.from(values);return v;},requireCheckbox:()=>{v.checkbox=true;return v;},build:()=>v};return v;};
   Object.assign(c,{
     SpreadsheetApp:{getActiveSpreadsheet:()=>ss,newDataValidation:validation,getUi:()=>({Button:{OK:'OK',CANCEL:'CANCEL'},ButtonSet:{OK_CANCEL:'both'},alert:()=>response})},
@@ -53,7 +54,7 @@ function harness(rows=[row()]){
     MailApp:{sendEmail:email=>{if(sendFailure)throw Error('Mail failure');sent.push(email);}}
   });
   vm.runInContext(code,c);
-  return {c,daily,clients,courses,sent,rendered,locks,sheets,ss,setCancel:()=>{response='CANCEL';},
+  return {c,daily,clients,courses,sent,rendered,locks,notices,sheets,ss,setCancel:()=>{response='CANCEL';},
     setActive:s=>{active=s;},failSend:()=>{sendFailure=true;},addSheet:s=>{s.parent=ss;sheets.push(s);}};
 }
 
@@ -167,4 +168,22 @@ test('JR uses its J link or falls back to I, while Fundamentals keeps its non-PD
   }
   const h=harness([row('Naveed F',{4:'Fundamentals',14:''})]);h.c.sendEmails();
   assert.equal(h.sent.length,1);assert.equal(h.rendered[0].name,'cs1AndFundamentals');
+});
+
+test('first student on row 2 is sent and saved, matching the original email script',()=>{
+  const h=harness();h.daily.data=[h.daily.data[0],row()];
+  assert.equal(h.c.sendEmails().sent,1);assert.equal(h.sent.length,1);
+  assert.equal(h.daily.getRange(2,12).getValue(),'EMAIL SENT');
+  assert.equal(h.clients.getRange(2,3).getValue(),folder);
+  assert.match(h.notices[0].message,/1 email\(s\) submitted/);
+});
+
+test('email outcomes are visible for skipped rows, validation failures and Mail errors',()=>{
+  const h=harness([row('Naveed F',{11:false})]);h.c.sendEmails();
+  assert.match(h.notices[0].message,/No emails sent.*Check K.*NOT SENT/);
+  const h2=harness([row('Naveed F',{14:'FAILED'})]);
+  assert.throws(()=>h2.c.sendEmails(),/Regenerate/);
+  assert.equal(h2.notices[0].title,'Email sending stopped');assert.match(h2.notices[0].message,/Row 3/);
+  const h3=harness();h3.failSend();assert.throws(()=>h3.c.sendEmails(),/Mail failure/);
+  assert.match(h3.notices[0].message,/Mail failure/);
 });

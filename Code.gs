@@ -1,7 +1,7 @@
 // Journal and parent-email workflow. Install alongside PDFGenerator.gs (v18+).
 const MAX_ROWS = 300;
 const DATA_START_ROW = 2; // Clients and Courses data start at row 2.
-const JOURNAL_DATA_START_ROW = 3;
+const JOURNAL_DATA_START_ROW = 2; // Preserve the original journal/email starting row.
 const PENDING_MSG = 'NOT SENT';
 const COMPLETE_MSG = 'EMAIL SENT';
 const BG_COLOR = 'green';
@@ -176,6 +176,22 @@ function journalEmailSubject_(courses,ninja,level,date) {
   return pattern.replace(/<ninja>/g,()=>ninja).replace(/<level>/g,()=>level).replace(/<date>/g,()=>date);
 }
 function sendEmails(confirm=false) {
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    const result=journalSendEmails_(confirm);
+    const message=result.cancelled?'Email sending cancelled.':result.sent?
+      result.sent+' email(s) submitted to Google Mail. Column L is now EMAIL SENT.':
+      'No emails sent on '+ss.getActiveSheet().getName()+'. Check K (Ready) and L (NOT SENT). Rows marked EMAIL SENT are skipped.';
+    ss.toast(message,'Parent emails',12);
+    console.log(message);
+    return result;
+  } catch(error) {
+    ss.toast(String(error.message||error).slice(0,1200),'Email sending stopped',20);
+    console.error(String(error.message||error));
+    throw error;
+  }
+}
+function journalSendEmails_(confirm=false) {
   if(confirm && !confirmSend()) return {sent:0,cancelled:true};
   const lock=LockService.getDocumentLock()||LockService.getScriptLock();lock.waitLock(30000);
   try {

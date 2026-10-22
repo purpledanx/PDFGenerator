@@ -78,8 +78,10 @@ when A2 is a curriculum project under a course heading, a standard progress
 subject is used instead. This avoids sending a project title as the subject.
 
 Course names are read from Courses row 1; projects start at row 2 under the
-matching heading. Clients data starts at row 2 and daily journal students at row
-3. Editing any dated journal tab loads student details, including older dates.
+matching heading. Clients and journal email processing start at row 2, matching
+the original email script. Blank or unchecked rows are skipped. The PDF generator
+currently selects students from row 3 onward. Editing any dated journal tab loads
+student details, including older dates.
 Choosing another student clears the old current belt/project, resets readiness,
 and marks the PDF stale. Changing the belt clears an old project unless the edit
 explicitly pastes a replacement project too. Multi-row edits are supported.
@@ -87,6 +89,11 @@ explicitly pastes a replacement project too. Multi-row edits are supported.
 Rebuilding Clients processes tabs by session date, oldest first, so later
 sessions win regardless of tab order. Blank values do not erase existing saved
 progress or links. No live email has been sent as part of developing this change.
+
+After running `sendEmails`, a spreadsheet notification reports how many emails
+were submitted, or explains that no rows were eligible. Validation and mail
+errors also appear in a notification and Apps Script execution logs. `EMAIL SENT`
+means Google accepted the send request; it does not confirm inbox delivery.
 
 Blue numbered Solve projects map directly to the printed wrench fields, regardless
 of Courses list order. Earlier activities become C and earlier levels receive L.
