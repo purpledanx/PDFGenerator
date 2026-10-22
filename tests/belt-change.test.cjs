@@ -49,7 +49,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   const originalLink=blankLink?'':folderLink?history.getUrl():source.getUrl();
   let link=originalLink;
   const cell={getRichTextValue:()=>null,getFormula:()=>'',getDisplayValue:()=>link,getColumn:()=>9,setValue:v=>{events.push('link');link=v;}};
-  const sh={getName:()=> '10-10',getParent:()=>({}),getRange:(row,col,width,height)=>{
+  const sh={getName:()=> '10-10',getLastRow:()=>3,getParent:()=>({}),getRange:(row,col,width,height)=>{
     if(col===1&&width===1&&height===5) return {getDisplayValues:()=>[['Naveed F','','','IMPACT_Orange','Lvl 1 Build 1']]};
     if(col===1) return {getDisplayValue:()=> 'Naveed F'};
     if(col===9) return cell;
@@ -68,28 +68,28 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
     addTrackerUndoRecord_:(id,record)=>{if(failLog)throw Error('Undo log unavailable');records.push(record);}
   });
   return {c,source,template,orange,history,files,folders,records,events,cell,ss,originalLink,
-    get link(){return link;},run:keepHistory=>c.generateForRow_(sh,3,'W',0,{sensei:'Amber',runId:'run',keepHistory}),
+    get link(){return link;},run:()=>c.generateForRow_(sh,3,'W',0,{sensei:'Amber',runId:'run'}),
     allowLog:()=>{failLog=false;}};
 }
 
-test('Blue direct link is replaced with filled Orange template at the same Drive ID',async()=>{
-  const h=await harness();const result=await h.run(false);
-  assert.equal(result.url,h.originalLink);assert.equal(h.link,h.originalLink);
-  assert.match(h.source.name,/Orange Belt/);
-  const pdf=await lib.PDFDocument.load(h.source.bytes),form=pdf.getForm();
+test('new belt automatically creates a child-named folder with a filled Orange PDF and the old Blue tracker',async()=>{
+  const h=await harness();const original=Buffer.from(h.source.bytes);const result=await h.run();
+  assert.notEqual(result.url,h.originalLink);assert.equal(h.link,result.url);
+  const rec=h.records[0],folder=h.folders.get(rec.folderId);
+  assert.equal(folder.name,'Naveed F');
+  assert.equal(h.files.get(rec.archiveId).folder,folder);
+  assert.equal(h.files.get(rec.fileId).folder,folder);
+  assert.deepEqual(h.source.bytes,original);assert.match(h.source.name,/Blue Belt/);
+  const pdf=await lib.PDFDocument.load(h.files.get(rec.fileId).bytes),form=pdf.getForm();
   assert.ok(form.getFieldMaybe('OrangeOnly'));assert.equal(form.getFieldMaybe('BlueOnly'),undefined);
   assert.equal(form.getTextField('Text1').getText(),'Naveed F');
   assert.equal(form.getDropdown('Dropdown2').getSelected()[0],'W');
   assert.equal(form.getTextField('Text3').getText(),'Working on Lvl 1 Build 1!');
-  assert.equal(h.records[0].previousFileName,'PREVIEW Naveed F Blue Belt IMPACT Tracker.pdf');
-  const backup=h.files.get(h.records[0].backupId);
-  const original=await lib.PDFDocument.load(backup.bytes);
-  assert.ok(original.getForm().getFieldMaybe('BlueOnly'));
-  assert.ok(h.events.indexOf('create')<h.events.indexOf('upload'));
+  assert.equal(h.events.includes('upload'),false);
 });
 
 test('level-up creates history folder and new Orange PDF, preserving the Blue original',async()=>{
-  const h=await harness();const before=Buffer.from(h.source.bytes);await h.run(true);
+  const h=await harness();const before=Buffer.from(h.source.bytes);await h.run();
   assert.deepEqual(h.source.bytes,before);assert.match(h.source.name,/Blue Belt/);
   assert.match(h.link,/folders\//);const rec=h.records[0];assert.equal(rec.created,true);
   assert.equal(h.files.get(rec.archiveId).folder,h.folders.get(rec.folderId));
@@ -103,44 +103,44 @@ test('level-up creates history folder and new Orange PDF, preserving the Blue or
 });
 
 test('existing folder adds missing Orange tracker without replacing earlier belts',async()=>{
-  const h=await harness({folderLink:true});const before=Buffer.from(h.source.bytes);await h.run(false);
+  const h=await harness({folderLink:true});const before=Buffer.from(h.source.bytes);await h.run();
   assert.deepEqual(h.source.bytes,before);assert.equal(h.link,h.originalLink);
   assert.equal(h.records[0].folderId,'history');assert.equal(h.records[0].archiveId,null);
 });
 
 test('folder with earlier belts updates existing Orange PDF rather than making duplicates',async()=>{
-  const h=await harness({folderLink:true,currentOrange:true});await h.run(true);
+  const h=await harness({folderLink:true,currentOrange:true});await h.run();
   assert.equal(h.records[0].fileId,'currentOrange');assert.equal(h.records[0].created,undefined);
   assert.equal(h.link,h.originalLink);assert.match(h.source.name,/Blue Belt/);
 });
 
 test('wrong student and inaccessible template do not change the linked file',async()=>{
   const h=await harness({wrongStudent:true});const before=Buffer.from(h.source.bytes);
-  await assert.rejects(h.run(false),/differs from journal/);assert.deepEqual(h.source.bytes,before);
+  await assert.rejects(h.run(),/differs from journal/);assert.deepEqual(h.source.bytes,before);
   const h2=await harness();h2.files.delete('templateOrange');const original=Buffer.from(h2.source.bytes);
-  await assert.rejects(h2.run(false),/Missing templateOrange/);assert.deepEqual(h2.source.bytes,original);
+  await assert.rejects(h2.run(),/Missing templateOrange/);assert.deepEqual(h2.source.bytes,original);
   assert.equal(h2.records.length,0);
 });
 
-test('undo-log failure rolls back replacements, filenames, folder additions and links',async()=>{
-  for(const keepHistory of [false,true]) {
-    const h=await harness({logFailure:true});const before=Buffer.from(h.source.bytes);
-    await assert.rejects(h.run(keepHistory),/Undo log unavailable/);
-    assert.deepEqual(h.source.bytes,before);assert.match(h.source.name,/Blue Belt/);
-    assert.equal(h.link,h.originalLink);
-    if(keepHistory) assert.equal([...h.files.values()].filter(f=>f.folder?.name==='Naveed F Tracker PDFs'&&!f.trashed).length,0);
+test('undo-log failure rolls back ordinary updates, folder additions and links',async()=>{
+  for(const existing of [false,true]) {
+    const h=await harness({logFailure:true,folderLink:existing,currentOrange:existing});
+    const target=existing?h.orange:h.source,before=Buffer.from(target.bytes);
+    await assert.rejects(h.run(),/Undo log unavailable/);
+    assert.deepEqual(target.bytes,before);assert.equal(h.link,h.originalLink);
+    if(!existing) assert.equal([...h.files.values()].filter(f=>f.folder?.name==='Naveed F'&&!f.trashed).length,0);
   }
 });
 
 test('folder undo preserves files and links changed after generation',async()=>{
-  const h=await harness();await h.run(true);const rec=h.records[0];
+  const h=await harness();await h.run();const rec=h.records[0];
   h.cell.setValue('https://drive.google.com/drive/folders/different');
   assert.throws(()=>h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss),/link changed/);
   assert.equal(h.files.get(rec.fileId).trashed,false);
 });
 
-test('Undo restores the replaced belt PDF contents and original filename',async()=>{
-  const h=await harness();const before=Buffer.from(h.source.bytes);await h.run(false);
+test('Undo restores an ordinary tracker update from its backup',async()=>{
+  const h=await harness({folderLink:true,currentOrange:true});const before=Buffer.from(h.orange.bytes);await h.run();
   const rec=h.records[0];let deleted=false;
   Object.assign(h.c,{
     LockService:{getDocumentLock:()=>({waitLock(){},releaseLock(){}})},
@@ -150,7 +150,7 @@ test('Undo restores the replaced belt PDF contents and original filename',async(
   });
   const result=h.c.restoreLastTrackerRun_('run');
   assert.equal(result.restored,1);assert.equal(result.skipped,0);assert.equal(deleted,true);
-  assert.deepEqual(h.source.bytes,before);assert.equal(h.source.name,rec.previousFileName);
+  assert.deepEqual(h.orange.bytes,before);assert.equal(h.orange.name,rec.previousFileName);
 });
 
 test('email link helper extracts folder URLs from labels and HYPERLINK formulas',()=>{
@@ -163,7 +163,7 @@ test('email link helper extracts folder URLs from labels and HYPERLINK formulas'
 
 
 test('blank tracker link creates a filled Orange PDF and folder; Undo restores the blank link',async()=>{
-  const h=await harness({blankLink:true});await h.run(false);
+  const h=await harness({blankLink:true});await h.run();
   const rec=h.records[0];assert.equal(rec.created,true);assert.equal(rec.archiveId,null);
   assert.match(h.link,/folders\//);
   const pdf=await lib.PDFDocument.load(h.files.get(rec.fileId).bytes);
@@ -175,26 +175,28 @@ test('blank tracker link creates a filled Orange PDF and folder; Undo restores t
 
 test('failed missing-tracker creation restores the blank link and cleans generated files',async()=>{
   const h=await harness({blankLink:true,logFailure:true});
-  await assert.rejects(h.run(false),/Undo log unavailable/);
+  await assert.rejects(h.run(),/Undo log unavailable/);
   assert.equal(h.link,'');
-  assert.equal([...h.folders.values()].filter(f=>f.name==='Naveed F Tracker PDFs'&&!f.trashed).length,0);
+  assert.equal([...h.folders.values()].filter(f=>f.name==='Naveed F'&&!f.trashed).length,0);
 });
 
-test('popup confirmation gates selected and entire-day server requests',()=>{
-  const submit=script.slice(script.indexOf('  function submitCards(){'),script.indexOf('  function processNextBatch('));
-  for(const scope of ['selected','day']) for(const confirmed of [false,true]) {
-    const calls=[],prompts=[];
-    const fields={sensei:{value:'Amber'},notes:{value:'Session notes'},keepHistory:{checked:true},summary:{textContent:''},results:{textContent:''}};
-    const run={withSuccessHandler(){return run;},withFailureHandler(){return run;},
-      generateFromPopup(...args){calls.push({kind:'selected',args});},beginDayTrackerRun_(...args){calls.push({kind:'day',args});}};
-    const c=vm.createContext({scope,running:false,undoBusy:false,isScratchJr:false,isCS1:false,rows:[3,4],
-      tab:'10-10',chosenRow:3,selectedName:'Naveed F',selectedCourse:'IMPACT_Orange',selectedProject:'Lvl 4 Build 2',
-      completed:0,failed:0,cursor:0,el:id=>fields[id],buttonsDisabled(){},processNextBatch(){},
-      google:{script:{run}},window:{confirm:message=>{prompts.push(message);return confirmed;}}});
-    vm.runInContext(submit+';submitCards();',c);
-    assert.equal(prompts.length,1);assert.match(prompts[0],/Missing trackers will be created/);
-    assert.equal(calls.length,confirmed?1:0);
-    if(confirmed) assert.equal(calls[0].kind,scope);
-    if(confirmed&&scope==='selected')assert.equal(calls[0].args.at(-1),true);
+test('new belt confirmation is shown only for additions and Cancel prevents student/day mutations',async()=>{
+  for(const config of [{},{blankLink:true},{folderLink:true}]) {
+    const h=await harness(config),prompts=[];
+    h.c.SpreadsheetApp={getActiveSpreadsheet:()=>h.ss,getUi:()=>({
+      ButtonSet:{OK_CANCEL:'buttons'},Button:{OK:'OK'},
+      alert:(title,message)=>{prompts.push({title,message});return 'CANCEL';}})};
+    h.c.LockService={getDocumentLock:()=>{throw Error('Cancelled request must not lock or write');}};
+    const result=await h.c.generateFromPopup('10-10',3,'Amber',0,'',null,'');
+    assert.equal(result.cancelled,true);assert.equal(h.records.length,0);assert.equal(h.link,h.originalLink);
+    assert.match(prompts[0].title,/Add new belt/);assert.match(prompts[0].message,/Naveed F/);
+    assert.equal(h.c.beginDayTrackerRun_('10-10'),null);
   }
+  const h=await harness({folderLink:true,currentOrange:true});
+  h.c.SpreadsheetApp={getUi:()=>{throw Error('Existing belt should not prompt');}};
+  assert.equal(h.c.confirmNewTrackerBelts_(h.ss.getSheetByName('10-10'),[3]),true);
+  const n=await harness();let message='';
+  n.c.SpreadsheetApp={getUi:()=>({ButtonSet:{OK_CANCEL:'buttons'},Button:{OK:'OK'},alert:(title,text)=>{message=text;return 'OK';}})};
+  assert.equal(n.c.confirmNewTrackerBelts_(n.ss.getSheetByName('10-10'),[3]),true);
+  assert.match(message,/folder named "Naveed F"/);assert.match(message,/copy of the old tracker/);
 });

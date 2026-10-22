@@ -4,7 +4,7 @@
  * Uses A (student), D (program), E (current project), I (tracker URL),
  * and J for Scratch Jr when present; writes status ONLY to N.
  * No extra PDF metadata columns are created.
- * Replaces a mismatched belt from its verified template, or preserves belt history in a folder.
+ * New belts automatically preserve the old and new trackers in a child-named folder.
  * Before each update, saves a backup to "Tracker PDF Undo Backups" in Drive.
  * Undo Last PDF Update is available inside the Generate Tracker PDFs popup,
  * as well as in the Tracker PDFs menu. A day batch is one undoable operation.
@@ -56,7 +56,7 @@ const CONFIG = {
 const TRACKER_FIELDS = {"IMPACT_Black":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3"]]},"IMPACT_Blue":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"],["Dropdown25","Dropdown35","Dropdown45"]]},"IMPACT_Brown":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55","Dropdown65","Dropdown75","Dropdown85"],["Dropdown16","Dropdown26","Dropdown36","Dropdown46","Dropdown56","Dropdown66"],["Dropdown17","Dropdown27","Dropdown37","Dropdown47","Dropdown57","Dropdown67"],["Dropdown18","Dropdown28","Dropdown38","Dropdown58","Dropdown68"],["Dropdown19","Dropdown29","Dropdown39","Dropdown49","Dropdown59"],["Dropdown1A","Dropdown2A","Dropdown3A","Dropdown4A","Dropdown4A","Dropdown5A"]]},"IMPACT_Green":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44"]]},"IMPACT_Orange":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"]]},"IMPACT_Purple":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55"]]},"IMPACT_Red":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"]]},"IMPACT_White":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"]]},"IMPACT_Yellow":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown53"]]},"UNITY_Bronze":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"1"},{"status":"Dropdown16","note":"2"},{"status":"Dropdown17","note":"undefined_15"},{"status":"Dropdown18","note":"undefined_16"},{"status":"Dropdown19","note":"undefined_17"},{"status":"Dropdown20","note":"undefined_18"}]},"UNITY_Gold":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"}]},"UNITY_Platinum":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"}]},"UNITY_Silver":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"undefined_15"},{"status":"Dropdown16","note":"undefined_16"},{"status":"Dropdown17","note":"undefined_17"},{"status":"Dropdown18","note":"undefined_18"},{"status":"Dropdown19","note":"undefined_19"},{"status":"Dropdown20","note":"undefined_20"},{"status":"Dropdown21","note":"undefined_21"},{"status":"Dropdown22","note":"undefined_22"},{"status":"Dropdown23","note":"undefined_23"},{"status":"Dropdown24","note":"undefined_24"},{"status":"Dropdown25","note":"undefined_25"},{"status":"Dropdown26","note":"undefined_26"},{"status":"Dropdown27","note":"undefined_27"},{"status":"Dropdown28","note":"undefined_28"},{"status":"Dropdown29","note":"undefined_29"},{"status":"Dropdown30","note":"undefined_30"},{"status":"Dropdown31","note":"undefined_31"},{"status":"Dropdown32","note":"undefined_32"}]},"CS_1":{"type":"CS1","rows":[{"check":"Check Box1","date":"Date9_af_date","by":"Text10"},{"check":"Check Box2","date":"Date11_af_date","by":"Text18"},{"check":"Check Box3","date":"Date12_af_date","by":"Text19"},{"check":"Check Box4","date":"Date13_af_date","by":"Text20"},{"check":"Check Box5","date":"Date14_af_date","by":"Text21"},{"check":"Check Box6","date":"Date15_af_date","by":"Text22"},{"check":"Check Box7","date":"Date16_af_date","by":"Text23"},{"check":"Check Box8","date":"Date17_af_date","by":"Text24"},{"check":"Check Box25","date":"Date33_af_date","by":"Text41"},{"check":"Check Box26","date":"Date34_af_date","by":"Text42"},{"check":"Check Box27","date":"Date35_af_date","by":"Text43"},{"check":"Check Box28","date":"Date36_af_date","by":"Text44"},{"check":"Check Box29","date":"Date37_af_date","by":"Text45"},{"check":"Check Box30","date":"Date38_af_date","by":"Text46"},{"check":"Check Box31","date":"Date39_af_date","by":"Text47"},{"check":"Check Box32","date":"Date40_af_date","by":"Text48"},{"check":"Check Box49","date":"Date57_af_date","by":"Text65"},{"check":"Check Box50","date":"Date58_af_date","by":"Text66"},{"check":"Check Box51","date":"Date59_af_date","by":"Text67"},{"check":"Check Box52","date":"Date60_af_date","by":"Text68"},{"check":"Check Box53","date":"Date61_af_date","by":"Text69"},{"check":"Check Box54","date":"Date62_af_date","by":"Text70"},{"check":"Check Box55","date":"Date63_af_date","by":"Text71"},{"check":"Check Box56","date":"Date64_af_date","by":"Text72"},{"check":"Check Box73","date":"Date81_af_date","by":"Text89"},{"check":"Check Box74","date":"Date82_af_date","by":"Text90"},{"check":"Check Box75","date":"Date83_af_date","by":"Text91"},{"check":"Check Box76","date":"Date84_af_date","by":"Text92"},{"check":"Check Box77","date":"Date85_af_date","by":"Text93"},{"check":"Check Box78","date":"Date86_af_date","by":"Text94"},{"check":"Check Box79","date":"Date87_af_date","by":"Text95"},{"check":"Check Box80","date":"Date88_af_date","by":"Text96"},{"check":"Check Box97","date":"Date105_af_date","by":"Text113"},{"check":"Check Box98","date":"Date106_af_date","by":"Text114"},{"check":"Check Box99","date":"Date107_af_date","by":"Text115"},{"check":"Check Box100","date":"Date108_af_date","by":"Text116"},{"check":"Check Box101","date":"Date109_af_date","by":"Text117"},{"check":"Check Box102","date":"Date110_af_date","by":"Text118"},{"check":"Check Box103","date":"Date111_af_date","by":"Text119"},{"check":"Check Box104","date":"Date112_af_date","by":"Text120"},{"check":"Check Box121","date":"Date129_af_date","by":"Text137"},{"check":"Check Box122","date":"Date130_af_date","by":"Text138"},{"check":"Check Box123","date":"Date131_af_date","by":"Text139"},{"check":"Check Box124","date":"Date132_af_date","by":"Text140"},{"check":"Check Box125","date":"Date133_af_date","by":"Text141"},{"check":"Check Box126","date":"Date134_af_date","by":"Text142"},{"check":"Check Box127","date":"Date135_af_date","by":"Text143"},{"check":"Check Box128","date":"Date136_af_date","by":"Text144"},{"check":"Check Box145","date":"Date153_af_date","by":"Text161"},{"check":"Check Box146","date":"Date154_af_date","by":"Text162"},{"check":"Check Box147","date":"Date155_af_date","by":"Text163"},{"check":"Check Box148","date":"Date156_af_date","by":"Text164"},{"check":"Check Box149","date":"Date157_af_date","by":"Text165"},{"check":"Check Box150","date":"Date158_af_date","by":"Text166"},{"check":"Check Box151","date":"Date159_af_date","by":"Text167"},{"check":"Check Box152","date":"Date160_af_date","by":"Text168"}]},"JR":{"type":"JR","rows":[{"date":"Date3_af_date","stars":["Check Box5","Check Box6","Check Box7"],"comment":"Text8"},{"date":"Date4_af_date","stars":["Check Box8","Check Box9","Check Box10"],"comment":"Text10"},{"date":"Date5_af_date","stars":["Check Box12","Check Box13","Check Box14"],"comment":"Text11"},{"date":"Date6_af_date","stars":["Check Box15","Check Box16","Check Box17"],"comment":"Text12"},{"date":"Date7_af_date","stars":["Check Box18","Check Box19","Check Box20"],"comment":"Text13"},{"date":"Date203_af_date","stars":["Check Box205","Check Box206","Check Box207"],"comment":"Text208"},{"date":"Date204_af_date","stars":["Check Box208","Check Box209","Check Box2010"],"comment":"Text2010"},{"date":"Date205_af_date","stars":["Check Box2012","Check Box2013","Check Box2014"],"comment":"Text2011"},{"date":"Date206_af_date","stars":["Check Box2015","Check Box2016","Check Box2017"],"comment":"Text2012"},{"date":"Date207_af_date","stars":["Check Box2018","Check Box2019","Check Box2020"],"comment":"Text2013"},{"date":"Date303_af_date","stars":["Check Box305","Check Box306","Check Box307"],"comment":"Text308"},{"date":"Date304_af_date","stars":["Check Box308","Check Box309","Check Box3010"],"comment":"Text3010"},{"date":"Date305_af_date","stars":["Check Box3012","Check Box3013","Check Box3014"],"comment":"Text3011"},{"date":"Date306_af_date","stars":["Check Box3015","Check Box3016","Check Box3017"],"comment":"Text3012"},{"date":"Date307_af_date","stars":["Check Box3018","Check Box3019","Check Box3020"],"comment":"Text3013"},{"date":"Date403_af_date","stars":["Check Box405","Check Box406","Check Box407"],"comment":"Text408"},{"date":"Date404_af_date","stars":["Check Box408","Check Box409","Check Box4010"],"comment":"Text4010"},{"date":"Date405_af_date","stars":["Check Box4012","Check Box4013","Check Box4014"],"comment":"Text4011"},{"date":"Date406_af_date","stars":["Check Box4015","Check Box4016","Check Box4017"],"comment":"Text4012"},{"date":"Date407_af_date","stars":["Check Box4018","Check Box4019","Check Box4020"],"comment":"Text4013"},{"date":"Date503_af_date","stars":["Check Box505","Check Box506","Check Box507"],"comment":"Text508"},{"date":"Date504_af_date","stars":["Check Box508","Check Box509","Check Box5010"],"comment":"Text5010"},{"date":"Date505_af_date","stars":["Check Box5012","Check Box5013","Check Box5014"],"comment":"Text5011"},{"date":"Date506_af_date","stars":["Check Box5015","Check Box5016","Check Box5017"],"comment":"Text5012"},{"date":"Date507_af_date","stars":["Check Box5018","Check Box5019","Check Box5020"],"comment":"Text5013"},{"date":"Date603_af_date","stars":["Check Box605","Check Box606","Check Box607"],"comment":"Text608"},{"date":"Date604_af_date","stars":["Check Box608","Check Box609","Check Box6010"],"comment":"Text6010"},{"date":"Date605_af_date","stars":["Check Box6012","Check Box6013","Check Box6014"],"comment":"Text6011"},{"date":"Date606_af_date","stars":["Check Box6015","Check Box6016","Check Box6017"],"comment":"Text6012"},{"date":"Date607_af_date","stars":["Check Box6018","Check Box6019","Check Box6020"],"comment":"Text6013"},{"date":"Date703_af_date","stars":["Check Box705","Check Box706","Check Box707"],"comment":"Text708"},{"date":"Date704_af_date","stars":["Check Box708","Check Box709","Check Box7010"],"comment":"Text7010"},{"date":"Date705_af_date","stars":["Check Box7012","Check Box7013","Check Box7014"],"comment":"Text7011"},{"date":"Date706_af_date","stars":["Check Box7015","Check Box7016","Check Box7017"],"comment":"Text7012"},{"date":"Date707_af_date","stars":["Check Box7018","Check Box7019","Check Box7020"],"comment":"Text7013"},{"date":"Date803_af_date","stars":["Check Box805","Check Box806","Check Box807"],"comment":"Text808"},{"date":"Date804_af_date","stars":["Check Box808","Check Box809","Check Box8010"],"comment":"Text8010"},{"date":"Date805_af_date","stars":["Check Box8012","Check Box8013","Check Box8014"],"comment":"Text8011"},{"date":"Date806_af_date","stars":["Check Box8015","Check Box8016","Check Box8017"],"comment":"Text8012"},{"date":"Date807_af_date","stars":["Check Box8018","Check Box8019","Check Box8020"],"comment":"Text8013"}]}};
 
 var PDF_LIB_CACHE_ = null;
-const TRACKER_GENERATOR_VERSION_ = 'v20';
+const TRACKER_GENERATOR_VERSION_ = 'v21';
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Tracker PDFs')
@@ -235,8 +235,6 @@ function openTrackerPopup() {
     <p class="muted">Date is read automatically from the sheet tab. ${escapeHtml_(safeAction)}.</p>
     <label>Sensei</label><input type="text" id="sensei" value="${escapeHtml_(sensei)}" placeholder="Enter Sensei name">
     <div id="singleFields">
-      <label><input type="checkbox" id="keepHistory"> Level-up: keep previous trackers in a folder</label>
-      <p class="muted">When the linked PDF is a different belt, keep it and create the new belt PDF in a student folder. Column I/J will link to that folder. An existing folder keeps all previous belts automatically. Otherwise replace the linked PDF, with an Undo backup.</p>
       <p class="muted">Current project: <b>Work in progress (W)</b> (always).</p>
       ${isScratchJr ? `<div id="scratchStars">
         <label>Scratch Jr stars (optional)</label>
@@ -266,8 +264,6 @@ function openTrackerPopup() {
   const rows=${JSON.stringify(dayRows)};
   const chosenRow=${selectedRow};
   const selectedName=${JSON.stringify(selectedName)};
-  const selectedCourse=${JSON.stringify(course)};
-  const selectedProject=${JSON.stringify(activity)};
   const tab=${JSON.stringify(sh.getName())};
   const updateOriginals=true;
   const isCS1=${isCS1?'true':'false'};
@@ -333,16 +329,6 @@ function openTrackerPopup() {
     const cs1Date=(scope==='selected' && isCS1) ? el('cs1Date').value : '';
     if(cs1Index!==null && !cs1Date){el('summary').textContent='Choose a completion date.';return;}
     if(!s){el('summary').textContent='Enter a Sensei name.';return;}
-    if(scope==='day') {
-      if(!window.confirm('Generate/update tracker PDFs for '+rows.length+' students on '+tab+
-        '? Missing trackers will be created from the correct templates. Existing folders keep earlier belts; mismatched direct PDFs will be replaced with an Undo backup.'))return;
-    } else {
-      const history=el('keepHistory').checked;
-      if(!window.confirm('Generate/update tracker for '+selectedName+' ('+selectedCourse+' / '+selectedProject+
-        ')? Missing trackers will be created from the correct template. '+
-        (history?'Previous belt PDFs will be kept in a student folder.':
-        'A mismatched direct PDF will be replaced with an Undo backup; existing folders keep earlier belts.')))return;
-    }
     running=true;buttonsDisabled(true);completed=0;failed=0;cursor=0;el('results').textContent='';
     if(scope==='selected') {
       el('summary').textContent='Processing student... You can close this dialog now.';
@@ -351,10 +337,13 @@ function openTrackerPopup() {
         google.script.host.close();
       }).withFailureHandler(e=>{running=false;buttonsDisabled(false);
         el('summary').textContent='Error: '+e.message;
-      }).generateFromPopup(tab,chosenRow,s,stars,el('notes').value.trim(),cs1Index,cs1Date,el('keepHistory').checked);
+      }).generateFromPopup(tab,chosenRow,s,stars,el('notes').value.trim(),cs1Index,cs1Date);
     } else {
       el('summary').textContent='Preparing batch...';
-      google.script.run.withSuccessHandler(runId=>processNextBatch(s,runId))
+      google.script.run.withSuccessHandler(runId=>{
+        if(!runId){running=false;buttonsDisabled(false);el('summary').textContent='Cancelled. No trackers changed.';return;}
+        processNextBatch(s,runId);
+      })
         .withFailureHandler(e=>{running=false;buttonsDisabled(false);el('summary').textContent='Error: '+e.message;})
         .beginDayTrackerRun_(tab);
     }
@@ -386,12 +375,37 @@ function openTrackerPopup() {
     'Generate Tracker PDFs ('+TRACKER_GENERATOR_VERSION_+')');
 }
 
+// Ask only when a new belt/template is needed. Do this before taking a lock:
+// Apps Script alert dialogs suspend execution and do not retain LockService locks.
+function confirmNewTrackerBelts_(sheet,rows) {
+  const additions=[];
+  for(const row of rows) {
+    const values=sheet.getRange(row,1,1,5).getDisplayValues()[0];
+    const student=values[0].trim(),inputCourse=values[3].trim();
+    if(!student || !inputCourse) continue;
+    const course=getCurriculum_(sheet.getParent(),inputCourse).course;
+    const jr=course==='JR'?getLink_(sheet.getRange(row,10)):'';
+    const location=locateTracker_(jr||getLink_(sheet.getRange(row,9)),course,student);
+    if(!location.file || programFromName_(location.file.getName())!==course) {
+      additions.push(student+' — '+course+(location.folder?
+        ': add the new tracker to the existing folder.':
+        ': create a folder named "'+student+'" with the new tracker'+
+        (location.file?' and a copy of the old tracker.':'.')));
+    }
+  }
+  if(!additions.length) return true;
+  const ui=SpreadsheetApp.getUi();
+  return ui.alert('Add new belt tracker?',additions.join('\n')+
+    '\n\nContinue? Cancel leaves the trackers unchanged.',ui.ButtonSet.OK_CANCEL)===ui.Button.OK;
+}
+
 // One-student popup action. Updates the PDF linked in I (or JR's J).
-async function generateFromPopup(tabName,row,sensei,stars,notes,cs1CompleteIndex,cs1CompletionDate,keepHistory=false) {
+async function generateFromPopup(tabName,row,sensei,stars,notes,cs1CompleteIndex,cs1CompletionDate) {
   const sh=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(tabName);
   if(!sh || !isDailyTab_(tabName) || row<3) throw new Error('Invalid journal row.');
   sensei=String(sensei||'').trim();
   if(!sensei) throw new Error('Sensei is required.');
+  if(!confirmNewTrackerBelts_(sh,[row])) return {cancelled:true};
   const lock=LockService.getDocumentLock()||LockService.getScriptLock();
   lock.waitLock(30000);
   try {
@@ -401,7 +415,7 @@ async function generateFromPopup(tabName,row,sensei,stars,notes,cs1CompleteIndex
       return await generateForRow_(sh,row,'W',Number(stars)||0,{
         sensei,notes:String(notes||'').trim(),runId,
         cs1CompleteIndex:cs1CompleteIndex==null ? null : Number(cs1CompleteIndex),
-        cs1CompletionDate:String(cs1CompletionDate||''),keepHistory:keepHistory===true
+        cs1CompletionDate:String(cs1CompletionDate||'')
       });
     } catch(e) {
       setTrackerIndicator_(sh,row,'FAILED',String(e.message||e));
@@ -414,6 +428,9 @@ async function generateFromPopup(tabName,row,sensei,stars,notes,cs1CompleteIndex
 function beginDayTrackerRun_(tabName) {
   const sh=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(tabName);
   if(!sh || !isDailyTab_(tabName)) throw new Error('Invalid daily tab.');
+  const rows=[];
+  for(let row=3;row<=sh.getLastRow();row++) if(sh.getRange(row,1).getDisplayValue().trim()) rows.push(row);
+  if(!confirmNewTrackerBelts_(sh,rows)) return null;
   const lock=LockService.getDocumentLock()||LockService.getScriptLock();
   lock.waitLock(30000);
   try {
@@ -638,8 +655,8 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
   try {
     if(!folder) {
       const parents=source?source.getParents():null;
-      folder=parents && parents.hasNext()?parents.next().createFolder(record.student+' Tracker PDFs'):
-        DriveApp.createFolder(record.student+' Tracker PDFs');
+      folder=parents && parents.hasNext()?parents.next().createFolder(record.student):
+        DriveApp.createFolder(record.student);
       createdFolder=folder;
       // Copy the previous belt into the history folder; leave its original intact.
       const oldCourse=source?programFromName_(previousName):null;
@@ -1113,7 +1130,7 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const prepared=await prepareTrackerPdf_(source,previousBytes,course,student,lib);
   const pdf=prepared.pdf;
   const form=pdf.getForm(), warnings=[];
-  const createNew=!source || (prepared.replaced && overrides && overrides.keepHistory===true);
+  const createNew=!source || prepared.replaced;
   const outputName=prepared.replaced || !source ? trackerFilename_(student,course) : previousName;
   if(meta.type==='IMPACT') applyImpact_(form,meta,course,task,curriculum.tasks,status,sensei,date,student,notes,warnings);
   else if(meta.type==='UNITY') applyUnity_(form,meta,idx,status,sensei,date,student,notes,warnings);

@@ -19,44 +19,38 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v20** after replacing the script and reloading the
+The popup title should show **v21** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
-Both selected-student and entire-day generation ask for confirmation before
-starting. Missing belt trackers in an existing linked folder are created from
-the correct template. If the tracker link is blank, generation creates a student
-folder in My Drive, adds the filled tracker, and writes the folder URL to I/J.
-Undo removes the generated files and restores the previous link, including a
-blank link. An inaccessible or invalid existing link is reported rather than
-silently replaced. The dated `getDateMd` documentation comment is retained in
-`Code.gs`.
+Generation asks for confirmation when it needs to add a new belt tracker.
+Cancel makes no tracker changes. An existing belt update does not prompt.
+If the tracker link is blank, generation creates a folder named exactly after
+that child in My Drive and adds the filled tracker. Undo removes the generated
+files and restores the previous link, including a blank link. An inaccessible
+or invalid existing link is reported rather than silently replaced. The dated
+`getDateMd` documentation comment is retained in `Code.gs`.
 
 ## Belt changes and history folders
 
-For a direct PDF link, a different belt in column D loads that belt's verified
-blank template, fills it, and replaces the existing file's contents and filename.
-The Drive ID and link stay the same. The old PDF is backed up first. Undo restores
-both its previous contents and filename. This also supports switching to an
-earlier belt; it does not assume students always advance in belt order.
+When column D specifies a different belt than the linked PDF, a confirmation
+popup lists the child and new belt. After confirmation, the script automatically
+creates a folder named exactly after the child (for example, `Oliver P`), copies
+the old tracker into it, and adds a filled PDF from the correct belt template.
+The folder is created alongside the old PDF, or in My Drive if no parent is
+available. The original old PDF remains intact. Column I (J for Scratch Jr when
+used) changes to the folder URL. There is no level-up checkbox or replace-belt
+option. Undo removes the generated files and restores the previous link.
 
-For the selected student, check **Level-up: keep previous trackers in a folder**
-to preserve history instead. When the linked PDF is a different belt, the script
-creates a student folder alongside the old PDF (or in My Drive if no parent is
-available), copies the old tracker into it, and adds the filled new belt PDF.
-The original old PDF stays intact. Column I (J for Scratch Jr when used) changes
-to the folder URL. Undo removes the generated files and restores the prior link.
+If I/J already links to a folder, future belts are added to that same folder
+after confirmation, preserving all previous trackers. If that belt already has
+one matching PDF, the script updates it without creating a duplicate or asking
+for new-belt confirmation. Multiple matching PDFs are reported as ambiguous.
+The same behavior applies to selected-student and day generation.
 
-If I/J already links to a folder, previous belt PDFs remain there automatically.
-The script updates the PDF matching column D, or adds it from its template if
-that belt is missing. It does not create another copy when that belt already
-exists. Multiple matching PDFs are reported as ambiguous. Folder mode is chosen
-per selected student; day batches use existing folders automatically and replace
-mismatched direct PDF links using backups.
-
-The script verifies the student's name before replacing a different belt PDF.
-It validates the filled result before uploading or creating files. It never
-overwrites a configured blank template. A folder you create must be accessible
-to the intended parents; the generator does not change sharing permissions.
+The script verifies the student's name before copying a different belt PDF.
+It validates the filled result before uploading or creating files and never
+overwrites a configured blank template. The folder must be accessible to the
+intended parents; the generator does not change sharing permissions.
 
 ## Email links
 
