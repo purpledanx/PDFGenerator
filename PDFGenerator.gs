@@ -335,7 +335,7 @@ function openTrackerPopup() {
     }
     running=true;buttonsDisabled(true);completed=0;failed=0;cursor=0;el('results').textContent='';
     if(scope==='selected') {
-      el('summary').textContent='Processing student...';
+      el('summary').textContent='Processing student... You can close this dialog now.';
       google.script.run.withSuccessHandler(r=>{
         running=false;buttonsDisabled(false);
         google.script.host.close();
