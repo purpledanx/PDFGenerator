@@ -124,3 +124,5 @@ and backward, and save/reopen PDFs to check marker values and visible appearance
 streams. No local server is required. Live spreadsheet, Drive, and undo operations
 must be checked in the authorized Google Apps Script runtime; these tests do not
 connect to Google or modify student PDFs.
+
+Documentation and code changes are maintained by [purpledanx](https://github.com/purpledanx).
