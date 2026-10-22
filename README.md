@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v28** after replacing the script and reloading the
+The popup title should show **v29** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -58,6 +58,23 @@ files and folders are not reshared. If Google rejects a needed sharing change
 and a fresh read cannot confirm public viewing, generation reports an error rather than
 marking the tracker updated. Undo restores tracker content/links; it does not
 revoke link viewing on existing files or folders.
+
+## Undo backup retention
+
+Undo backup PDFs are kept for the five most recent successful generation actions
+per journal. A whole-day run counts as one action, even when it updates many
+students. On action six, backups from the oldest action move to Drive Trash.
+Empty or fully failed runs do not advance retention. Undo Last PDF Update still
+restores only the latest run; keeping backup files does not add a history picker.
+
+Cleanup removes only recorded backup PDFs in the Undo backup folder. Student
+trackers, child folders and archived belt PDFs are preserved. A failed update
+with a successful rollback discards its unused backup immediately. Cleanup
+permission failures are logged and retried on later generation actions.
+
+The last available Undo run is registered when upgrading. Older untracked
+backups from previous script versions are left alone because their action ages
+cannot be established reliably.
 
 ## Whole-day progress
 

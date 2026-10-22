@@ -113,5 +113,5 @@ test('rendered popup includes a visible warning on the day option and valid clie
   const option=html.match(/<label class="radio"><input[^>]*value="day"[\s\S]*?<\/label>/)[0];
   assert.match(option,/DO NOT CLOSE THIS DIALOG/);assert.doesNotMatch(option,/\bhidden\b/);
   const client=html.match(/<script>([\s\S]*?)<\/script>/)[1];assert.doesNotThrow(()=>new vm.Script(client));
-  assert.match(title,/v28/);
+  assert.equal(title,'Generate Tracker PDFs ('+vm.runInContext('TRACKER_GENERATOR_VERSION_',c)+')');
 });
