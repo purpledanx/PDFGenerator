@@ -96,3 +96,46 @@ test('Blue level 5 Solve 1 uses the first wrench regardless of Courses list orde
     assert.doesNotMatch(appearance(pdf, 'Dropdown54'), /<4c> Tj/i);
   }
 });
+
+test('Yellow Quest / Adventure gains a visible W without awarding current-level L', async () => {
+  const yellow=vm.runInContext('TRACKER_FIELDS.IMPACT_Yellow',context);
+  let pdf=await PDFDocument.create();const page=pdf.addPage();
+  const form=pdf.getForm();
+  for(const name of ['Text1','Text2','Date3_af_date','Text3','Text4']) form.createTextField(name);
+  yellow.levels.forEach((names,level)=>names.forEach((name,index)=>{
+    const field=form.createDropdown(name);
+    field.addOptions(index===names.length-1?['R','L',' ']:['W','C','S',' ']);
+    field.addToPage(page,{x:20+index*60,y:700-level*60,width:45,height:20});
+  }));
+  form.getDropdown('Dropdown51').select('L');
+  const task='Lvl 2 Quest / Adventure';
+  context.applyImpact_(form,yellow,'IMPACT_Yellow',task,[task],'W','Sensei',
+    {short:'10/10/26'},'Student','Working on '+task+'!',[]);
+  form.updateFieldAppearances(await pdf.embedFont(StandardFonts.Helvetica));
+  pdf=await PDFDocument.load(await pdf.save());
+  assert.equal(selected(pdf,'Dropdown51'),'W');
+  assert.equal(selected(pdf,'Dropdown5'),'L');
+  assert.deepEqual(Array.from(yellow.levels[1],name=>selected(pdf,name)),['C','C','C','C','W']);
+  assert.match(appearance(pdf,'Dropdown51'),/<57> Tj/);
+  assert.deepEqual(Array.from(yellow.levels.flat()).filter(name=>selected(pdf,name)==='W'),['Dropdown51']);
+  assert.equal(context.impactTarget_(pdf.getForm(),yellow,'IMPACT_Yellow',task,[task]).name,'Dropdown51');
+});
+
+test('Blue quest handles preceding R/L-only fields and does not shift later project mapping',async()=>{
+  let pdf=await fixture();
+  pdf=await update(pdf,'Lvl 5 Solve 1');
+  pdf.getForm().getDropdown('Dropdown53').clear();
+  const task='Lvl 4 Quest / Adventure';
+  context.applyImpact_(pdf.getForm(),meta,'IMPACT_Blue',task,[...tasks,task],'W','Sensei',
+    {short:'10/10/26'},'Student','Working on '+task+'!',[]);
+  pdf.getForm().updateFieldAppearances(await pdf.embedFont(StandardFonts.Helvetica));
+  pdf=await PDFDocument.load(await pdf.save());
+  assert.equal(selected(pdf,'Dropdown63'),'W');
+  assert.equal(selected(pdf,'Dropdown53'),'');
+  // Quest's newly added W option must not be counted as a work slot.
+  const entries=['Lvl 4 Build 1','Lvl 4 Build 2','Lvl 4 Build 3','Lvl 4 Explore 1'];
+  assert.throws(()=>context.impactTarget_(pdf.getForm(),meta,'IMPACT_Blue',entries[3],entries),/No unambiguous/);
+  pdf=await update(pdf,'Lvl 5 Solve 1');
+  assert.equal(selected(pdf,'Dropdown63'),'L');
+  assert.equal(selected(pdf,'Dropdown34'),'W');
+});

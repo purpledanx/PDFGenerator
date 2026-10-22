@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v19** after replacing the script and reloading the
+The popup title should show **v20** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
 Both selected-student and entire-day generation ask for confirmation before
@@ -107,8 +107,11 @@ means Google accepted the send request; it does not confirm inbox delivery.
 Blue numbered Solve projects map directly to the printed wrench fields, regardless
 of Courses list order. Earlier activities become C and earlier levels receive L.
 Later IMPACT C/W/R/L markers are cleared to match the journal project; explicit S
-skips remain. Dropdowns without blank options can also be cleared. Quest level-up
-still requires approval. Moving the journal project backwards resets later progress,
+skips remain. Dropdowns without blank options can also be cleared. A current
+Quest / Adventure is marked W in its quest dropdown. When a source field only
+allows R/L/blank, W is added to that student's PDF, leaving the shared template
+unchanged. Selecting a quest does not award the current level an L. Moving the
+journal project backwards resets later progress,
 so use Undo Last PDF Update to restore the prior tracker if needed.
 
 ## Local checks
