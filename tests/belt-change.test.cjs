@@ -14,6 +14,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   function file(name,bytes,id='f'+(++seq),folder=null) {
     const f={id,name,bytes:Buffer.from(bytes),trashed:false,
       getId:()=>id,getName:()=>f.name,setName:n=>{f.name=n;events.push('rename');return f;},
+      getSharingAccess:()=>f.sharing?.access||'PRIVATE',getSharingPermission:()=>f.sharing?.permission||'NONE',
       setSharing:(access,permission)=>{if(sharingDenied)throw Error('Public sharing disabled');f.sharing={access,permission};return f;},
       getMimeType:()=> 'application/pdf',getUrl:()=>`https://drive.google.com/file/d/${id}/view`,
       getBlob:()=>blob(f.bytes,f.name),getParents:()=>iterator(folder?[folder]:[]),
@@ -21,7 +22,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
     f.folder=folder;files.set(id,f);return f;
   }
   function folder(name,id='d'+(++seq)) {
-    const d={id,name,trashed:false,getName:()=>name,setSharing:(access,permission)=>{if(sharingDenied)throw Error('Public sharing disabled');d.sharing={access,permission};return d;},getId:()=>id,getUrl:()=>`https://drive.google.com/drive/folders/${id}`,
+    const d={id,name,trashed:false,getName:()=>name,getSharingAccess:()=>d.sharing?.access||'PRIVATE',getSharingPermission:()=>d.sharing?.permission||'NONE',setSharing:(access,permission)=>{if(sharingDenied)throw Error('Public sharing disabled');d.sharing={access,permission};return d;},getId:()=>id,getUrl:()=>`https://drive.google.com/drive/folders/${id}`,
       createFile:b=>{events.push('create');return file(b.getName(),b.getBytes(),undefined,d);},
       createFolder:n=>{const child=folder(n);child.parent=d;return child;},
       getFiles:()=>iterator([...files.values()].filter(f=>f.folder===d&&!f.trashed)),
@@ -58,7 +59,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   }};
   const ss={getSheetByName:()=>sh};
   Object.assign(c,{
-    DriveApp:{Access:{ANYONE_WITH_LINK:'ANYONE_WITH_LINK'},Permission:{VIEW:'VIEW'},getFileById:id=>{if(!files.has(id))throw Error('Missing '+id);return files.get(id);},
+    DriveApp:{Access:{ANYONE_WITH_LINK:'ANYONE_WITH_LINK',ANYONE:'ANYONE'},Permission:{VIEW:'VIEW',COMMENT:'COMMENT',EDIT:'EDIT'},getFileById:id=>{if(!files.has(id))throw Error('Missing '+id);return files.get(id);},
       getFolderById:id=>folders.get(id),createFolder:folder},MimeType:{PDF:'application/pdf'},
     Utilities:{newBlob:(bytes,type,name)=>blob(bytes,name)},
     getPdfLib_:()=>lib,getSessionDate_:()=>({short:'10/10/26'}),
@@ -251,4 +252,39 @@ test('public whole-day entry points generate a real PDF and expose processing st
   assert.equal(progress.name,'Naveed F');assert.equal(progress.stage,'Completed');
   for(const expected of ['Finding the student tracker','Filling project markers and notes','Saving and validating PDF markers',
     'Creating the student folder and keeping the old tracker','Enabling anyone-with-link viewing','Completed'])assert.ok(stages.includes(expected),expected);
+});
+
+
+test('already-public folder and PDFs update without permission to change sharing',async()=>{
+  const h=await harness({folderLink:true,currentOrange:true,sharingDenied:true});
+  for(const item of [h.history,h.source,h.orange])item.sharing={access:'ANYONE_WITH_LINK',permission:'VIEW'};
+  await h.run();assert.equal(h.records.length,1);
+  const pdf=await lib.PDFDocument.load(h.orange.bytes);
+  assert.equal(pdf.getForm().getDropdown('Dropdown2').getSelected()[0],'W');
+});
+
+test('already-public direct PDF can be updated by an editor who cannot reshare it',async()=>{
+  const h=await harness({sharingDenied:true});
+  h.source.name='Naveed F Orange Belt IMPACT Tracker.pdf';h.source.bytes=Buffer.from(h.template.bytes);
+  h.source.sharing={access:'ANYONE_WITH_LINK',permission:'VIEW'};
+  await h.run();assert.equal(h.records.length,1);
+});
+
+test('public comment and edit access are preserved, while domain-only access must be changed',async()=>{
+  const h=await harness();
+  for(const access of ['ANYONE','ANYONE_WITH_LINK'])for(const permission of ['VIEW','COMMENT','EDIT']){
+    h.c.shareTrackerViewLinks_({getSharingAccess:()=>access,getSharingPermission:()=>permission,
+      setSharing(){throw Error('Must not change existing public access');}},null);
+  }
+  let changed=false;
+  h.c.shareTrackerViewLinks_({getSharingAccess:()=> 'DOMAIN_WITH_LINK',getSharingPermission:()=> 'VIEW',
+    setSharing:(access,permission)=>{changed=true;assert.equal(access,'ANYONE_WITH_LINK');assert.equal(permission,'VIEW');}},null);
+  assert.equal(changed,true);
+});
+
+test('a denied sharing write is accepted only if a fresh read confirms public access',async()=>{
+  const h=await harness();let reads=0;
+  h.c.shareTrackerViewLinks_({getSharingAccess:()=>++reads>1?'ANYONE_WITH_LINK':'PRIVATE',
+    getSharingPermission:()=> 'VIEW',setSharing(){throw Error('Access denied: DriveApp');}},null);
+  assert.equal(reads,2);
 });

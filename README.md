@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-The popup title should show **v26** after replacing the script and reloading the
+The popup title should show **v27** after replacing the script and reloading the
 sheet. Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -53,7 +53,9 @@ overwrites a configured blank template. The generator sets the student folder an
 the link → Viewer**. A direct tracker PDF gets the same viewing access. Running
 generation again applies this to an existing history folder and its earlier
 belt PDFs as well. Templates and Undo backups are not explicitly shared.
-If Google rejects the sharing change, generation reports an error rather than
+Existing public view/comment/edit access is checked first, so already-shared
+files and folders are not reshared. If Google rejects a needed sharing change
+and a fresh read cannot confirm public viewing, generation reports an error rather than
 marking the tracker updated. Undo restores tracker content/links; it does not
 revoke link viewing on existing files or folders.
 
