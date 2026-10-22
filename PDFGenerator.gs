@@ -218,7 +218,7 @@ function openTrackerPopup() {
   <div id="dayWarning" role="alert" ${selectedValid?'hidden':''}
     style="position:sticky;top:0;z-index:1;padding:12px;margin-bottom:14px;border:2px solid #b3261e;background:#fce8e6;color:#b3261e;border-radius:5px">
     <strong style="font-size:18px">DO NOT CLOSE THIS DIALOG</strong><br>
-    Keep it open until the whole-day run finishes. Closing it stops the remaining students.
+    Keep it open until the script finishes. Closing it stops the remaining students.
   </div>
   <div id="choose">
     <h3>Which trackers should I process?</h3>
@@ -414,7 +414,7 @@ function openTrackerPopup() {
   </script></body></html>`;
   SpreadsheetApp.getUi().showModalDialog(
     HtmlService.createHtmlOutput(html).setWidth(490).setHeight(isCS1?750:680),
-    'Generate Tracker PDFs ('+TRACKER_GENERATOR_VERSION_+')');
+    'Generate Tracker PDFs');
 }
 
 // Ask only when a new belt/template is needed. Do this before taking a lock:
