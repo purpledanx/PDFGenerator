@@ -7,20 +7,21 @@ const lib=require('pdf-lib');
 const script=fs.readFileSync(require.resolve('../PDFGenerator.gs'),'utf8');
 const iterator=items=>{let i=0;return {hasNext:()=>i<items.length,next:()=>items[i++]};};
 
-async function harness({folderLink=false,currentOrange=false,wrongStudent=false,logFailure=false,blankLink=false}={}) {
+async function harness({folderLink=false,currentOrange=false,wrongStudent=false,logFailure=false,blankLink=false,sharingDenied=false}={}) {
   const files=new Map(),folders=new Map(),records=[],events=[];
   let seq=0,failLog=logFailure;
   const blob=(bytes,name)=>({getBytes:()=>Array.from(bytes),getName:()=>name});
   function file(name,bytes,id='f'+(++seq),folder=null) {
     const f={id,name,bytes:Buffer.from(bytes),trashed:false,
       getId:()=>id,getName:()=>f.name,setName:n=>{f.name=n;events.push('rename');return f;},
+      setSharing:(access,permission)=>{if(sharingDenied)throw Error('Public sharing disabled');f.sharing={access,permission};return f;},
       getMimeType:()=> 'application/pdf',getUrl:()=>`https://drive.google.com/file/d/${id}/view`,
       getBlob:()=>blob(f.bytes,f.name),getParents:()=>iterator(folder?[folder]:[]),
       setTrashed:t=>{f.trashed=t;},makeCopy:(n,d)=>file(n,f.bytes,undefined,d)};
     f.folder=folder;files.set(id,f);return f;
   }
   function folder(name,id='d'+(++seq)) {
-    const d={id,name,trashed:false,getId:()=>id,getUrl:()=>`https://drive.google.com/drive/folders/${id}`,
+    const d={id,name,trashed:false,getName:()=>name,setSharing:(access,permission)=>{if(sharingDenied)throw Error('Public sharing disabled');d.sharing={access,permission};return d;},getId:()=>id,getUrl:()=>`https://drive.google.com/drive/folders/${id}`,
       createFile:b=>{events.push('create');return file(b.getName(),b.getBytes(),undefined,d);},
       createFolder:n=>{const child=folder(n);child.parent=d;return child;},
       getFiles:()=>iterator([...files.values()].filter(f=>f.folder===d&&!f.trashed)),
@@ -57,7 +58,7 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   }};
   const ss={getSheetByName:()=>sh};
   Object.assign(c,{
-    DriveApp:{getFileById:id=>{if(!files.has(id))throw Error('Missing '+id);return files.get(id);},
+    DriveApp:{Access:{ANYONE_WITH_LINK:'ANYONE_WITH_LINK'},Permission:{VIEW:'VIEW'},getFileById:id=>{if(!files.has(id))throw Error('Missing '+id);return files.get(id);},
       getFolderById:id=>folders.get(id),createFolder:folder},MimeType:{PDF:'application/pdf'},
     Utilities:{newBlob:(bytes,type,name)=>blob(bytes,name)},
     getPdfLib_:()=>lib,getSessionDate_:()=>({short:'10/10/26'}),
@@ -199,4 +200,35 @@ test('new belt confirmation is shown only for additions and Cancel prevents stud
   n.c.SpreadsheetApp={getUi:()=>({ButtonSet:{OK_CANCEL:'buttons'},Button:{OK:'OK'},alert:(title,text)=>{message=text;return 'OK';}})};
   assert.equal(n.c.confirmNewTrackerBelts_(n.ss.getSheetByName('10-10'),[3]),true);
   assert.match(message,/folder named "Naveed F"/);assert.match(message,/copy of the old tracker/);
+});
+
+
+test('new child folder, archived old tracker and new PDF all allow anyone with link to view',async()=>{
+  const h=await harness();await h.run();const rec=h.records[0];
+  for(const item of [h.folders.get(rec.folderId),h.files.get(rec.archiveId),h.files.get(rec.fileId)])
+    assert.deepEqual(item.sharing,{access:'ANYONE_WITH_LINK',permission:'VIEW'});
+  assert.equal(h.template.sharing,undefined);
+  assert.equal(h.source.sharing,undefined); // Original stays outside the new shared folder.
+});
+
+test('updating existing folders shares previous and current belt PDFs, with no public backups',async()=>{
+  const h=await harness({folderLink:true,currentOrange:true});
+  h.source.name='Naveed F Blue Belt IMPACT Tracker.pdf';
+  await h.run();
+  for(const item of [h.history,h.source,h.orange])
+    assert.deepEqual(item.sharing,{access:'ANYONE_WITH_LINK',permission:'VIEW'});
+  assert.equal(h.files.get(h.records[0].backupId).sharing,undefined);
+});
+
+test('same-belt direct PDF gets link-view access',async()=>{
+  const h=await harness();h.source.name='Naveed F Orange Belt IMPACT Tracker.pdf';
+  h.source.bytes=Buffer.from(h.template.bytes);await h.run();
+  assert.deepEqual(h.source.sharing,{access:'ANYONE_WITH_LINK',permission:'VIEW'});
+});
+
+test('sharing failure prevents success and cleans newly generated files without changing the old PDF',async()=>{
+  const h=await harness({sharingDenied:true});const before=Buffer.from(h.source.bytes);
+  await assert.rejects(h.run(),/Could not enable anyone-with-link viewing.*Public sharing disabled/);
+  assert.equal(h.records.length,0);assert.equal(h.link,h.originalLink);assert.deepEqual(h.source.bytes,before);
+  assert.equal([...h.folders.values()].filter(f=>f.name==='Naveed F'&&!f.trashed).length,0);
 });
