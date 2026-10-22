@@ -1,3 +1,4 @@
+/** Danny Wang (purpledanx) — 10/21/2026 — Journal and Email Script */
 // Journal and parent-email workflow. Install alongside PDFGenerator.gs (v18+).
 const MAX_ROWS = 300;
 const DATA_START_ROW = 2; // Clients and Courses data start at row 2.

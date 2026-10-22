@@ -72,7 +72,7 @@ test('progress reads are scoped to the current undo run and tolerate unavailable
 });
 
 test('HTML calls public day entry points rather than Apps Script private functions',()=>{
-  const html=source.slice(source.indexOf('  const html=`'),source.indexOf('// Ask only when a new belt'));
+  const html=source.slice(source.indexOf('  const html=`'),source.indexOf('function confirmNewTrackerBelts_('));
   assert.match(html,/\.beginDayTrackerRun\(tab\)/);assert.match(html,/\.generateDayBatch\(tab,batch,s,runId\)/);
   assert.doesNotMatch(html,/\.(beginDayTrackerRun_|generateDayBatch_)\(/);
 });
