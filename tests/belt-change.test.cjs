@@ -49,12 +49,14 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
   let orange=null;
   if(currentOrange) orange=file('Naveed F Orange Belt IMPACT Tracker.pdf',orangeBytes,'currentOrange',history);
   const originalLink=blankLink?'':folderLink?history.getUrl():source.getUrl();
-  let link=originalLink;
+  let link=originalLink,ready=false;
+  const readyCell={getValue:()=>ready,setValue:value=>{events.push('ready');ready=value;}};
   const cell={getRichTextValue:()=>null,getFormula:()=>'',getDisplayValue:()=>link,getColumn:()=>9,setValue:v=>{events.push('link');link=v;}};
   const sh={getName:()=> '10-10',getLastRow:()=>3,getParent:()=>({}),getRange:(row,col,width,height)=>{
     if(col===1&&width===1&&height===5) return {getDisplayValues:()=>[['Naveed F','','','IMPACT_Orange','Lvl 1 Build 1']]};
     if(col===1) return {getDisplayValue:()=> 'Naveed F'};
     if(col===9) return cell;
+    if(col===11) return readyCell;
     return {getDisplayValue:()=> 'PDF UPDATED'};
   }};
   const ss={getSheetByName:()=>sh};
@@ -67,10 +69,10 @@ async function harness({folderLink=false,currentOrange=false,wrongStudent=false,
     assertTrackerRun_:()=>{},setTrackerIndicator_:()=>{},getUndoFolder_:()=>folder('Backups'),
     hashPdfBytes_:bytes=>crypto.createHash('sha256').update(Buffer.from(bytes)).digest('hex'),
     updateDrivePdf_:(id,b)=>{events.push('upload');files.get(id).bytes=Buffer.from(b.getBytes());},
-    addTrackerUndoRecord_:(id,record)=>{if(failLog)throw Error('Undo log unavailable');records.push(record);}
+    addTrackerUndoRecord_:(id,record)=>{if(failLog)throw Error('Undo log unavailable');events.push('undo');records.push(record);}
   });
   return {c,source,template,orange,history,files,folders,records,events,cell,ss,originalLink,
-    get link(){return link;},run:()=>c.generateForRow_(sh,3,'W',0,{sensei:'Amber',runId:'run'}),
+    get link(){return link;},get ready(){return ready;},run:()=>c.generateForRow_(sh,3,'W',0,{sensei:'Amber',runId:'run'}),
     allowLog:()=>{failLog=false;}};
 }
 
@@ -287,4 +289,19 @@ test('a denied sharing write is accepted only if a fresh read confirms public ac
   h.c.shareTrackerViewLinks_({getSharingAccess:()=>++reads>1?'ANYONE_WITH_LINK':'PRIVATE',
     getSharingPermission:()=> 'VIEW',setSharing(){throw Error('Access denied: DriveApp');}},null);
   assert.equal(reads,2);
+});
+
+
+test('successful PDF creation or update checks column K only after the PDF and Undo record are saved',async()=>{
+  for(const config of [{},{folderLink:true,currentOrange:true},{blankLink:true}]){
+    const h=await harness(config);assert.equal(h.ready,false);await h.run();
+    assert.equal(h.ready,true);assert.ok(h.events.indexOf('ready')>h.events.indexOf('undo'));
+  }
+});
+
+test('failed generation does not check Ready, including sharing and Undo-log failures',async()=>{
+  for(const config of [{wrongStudent:true},{sharingDenied:true},{logFailure:true}]){
+    const h=await harness(config);await assert.rejects(h.run());
+    assert.equal(h.ready,false);assert.equal(h.events.includes('ready'),false);
+  }
 });

@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v29**. Replace the script and reload the sheet to use it.
+This revision is **v30**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -89,6 +89,12 @@ values, backing up or creating PDFs, enabling link viewing, and updating the
 journal link. Stages are read periodically while each student is processed.
 The dialog uses public Apps Script entry points; private functions ending in
 an underscore are not callable from HTML-service clients.
+
+Successful PDF generation or updating automatically checks the student's Ready
+checkbox in column K, for both selected-student and whole-day processing. This
+happens after the filled PDF, sharing, and Undo record have been saved. Failed
+or cancelled updates do not check Ready. It does not send email or reset column
+L from `EMAIL SENT` to `NOT SENT`.
 
 ## Email links
 
