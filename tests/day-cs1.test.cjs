@@ -4,10 +4,10 @@ const fs=require('node:fs'),vm=require('node:vm'),lib=require('pdf-lib');
 const source=fs.readFileSync(require.resolve('../PDFGenerator.gs'),'utf8');
 const tasks=['Storytelling 1: Dialogue','Storytelling 2: Check It Out','Storytelling 3: Setting'];
 
-function render(){
+function render(selectedRow=3){
   const data={3:['Oliver P','','','IMPACT_Yellow','Lvl 2 Build 1'],4:['Easton G','','','CS_1',tasks[1]],5:['Ada S','','','CS_1',tasks[2]]};
   const ss={getName:()=> 'Journal 10-2026'};
-  const sheet={getName:()=> '10-29',getParent:()=>ss,getActiveRange:()=>({getRow:()=>3}),getLastRow:()=>5,
+  const sheet={getName:()=> '10-29',getParent:()=>ss,getActiveRange:()=>({getRow:()=>selectedRow}),getLastRow:()=>5,
     getRange:(row,col,nr=1,nc=1)=>({getDisplayValue:()=>data[row]?.[col-1]||'',
       getDisplayValues:()=>Array.from({length:nr},(_,i)=>Array.from({length:nc},(_,j)=>data[row+i]?.[col+j-1]||''))})};
   let html='';
@@ -109,4 +109,22 @@ test('mixed whole-day batches keep each CS1 selection isolated from other studen
   assert.equal(calls[0].overrides.cs1CompleteIndex,undefined);
   assert.equal(calls[1].overrides.cs1CompleteIndex,0);assert.equal(calls[1].overrides.cs1CompletionDate,'2026-10-20');
   assert.equal(calls[1].overrides.notes,'Easton notes');assert.equal(calls[1].overrides.sensei,'Amber');
+});
+
+
+test('CS1 notes default to Still working and change to Nice only when a completion is selected',()=>{
+  const {html}=render(4);
+  assert.match(html,/<textarea id="notes"[^>]*>Still working\.<\/textarea>/);
+  assert.match(html,/<textarea id="dayCs14Notes"[^>]*>Still working\.<\/textarea>/);
+  assert.match(html,/<select id="cs1Complete" onchange="updateCs1Notes/);
+  assert.match(html,/<select id="dayCs14Complete" onchange="updateCs1Notes/);
+  const fields={cs1Complete:{value:''},notes:{value:'Still working.'},dayCs14Complete:{value:''},dayCs14Notes:{value:'Still working.'}};
+  const c=vm.createContext({el:id=>fields[id]});
+  vm.runInContext(source.slice(source.indexOf('  function updateCs1Notes('),source.indexOf('  function collectDayCs1Selections(')),c);
+  for(const [select,notes]of [['cs1Complete','notes'],['dayCs14Complete','dayCs14Notes']]){
+    fields[select].value='0';c.updateCs1Notes(select,notes);assert.equal(fields[notes].value,'Nice!');
+    fields[select].value='';c.updateCs1Notes(select,notes);assert.equal(fields[notes].value,'Still working.');
+    fields[notes].value='Custom instructor note';fields[select].value='0';c.updateCs1Notes(select,notes);
+    assert.equal(fields[notes].value,'Custom instructor note');
+  }
 });

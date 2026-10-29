@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v31**. Replace the script and reload the sheet to use it.
+This revision is **v32**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -81,7 +81,10 @@ cannot be established reliably.
 When Entire day is selected, each CS1 student has a separate completion form
 before the batch starts, even if the initially selected student is in another
 program. Choose a completed project (or None), completion date, and notes for
-each CS1 student. The common Sensei field applies to all students. The current
+each CS1 student. Notes default to `Still working.` with None selected, and
+switch to `Nice!` when a completion project is selected. Custom instructor notes
+are preserved when changing the selection. The same defaults apply to the
+single-student form. The common Sensei field applies to all students. The current
 project from column E remains in progress, and previously recorded completions
 keep their date and Sensei. If a student's row or project changes after the form
 was displayed, that student's update stops and asks you to reopen the popup.
