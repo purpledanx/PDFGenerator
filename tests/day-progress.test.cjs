@@ -12,7 +12,7 @@ function dialog(){
     return chain;
   }});
   const c=vm.createContext({running:true,activeDayRun:'run',progressTimer:null,cursor:0,completed:0,failed:0,rows:[3,4],
-    studentNames:{3:'Oliver P',4:'Naveed F'},tab:'10-10',el:id=>elements[id],buttonsDisabled(){},
+    dayCs1Selections:{},studentNames:{3:'Oliver P',4:'Naveed F'},tab:'10-10',el:id=>elements[id],buttonsDisabled(){},
     addResult:(label,url,error)=>results.push({label,url,error}),google:{script},
     setTimeout:f=>{timers.push(f);return timers.length;},clearTimeout:id=>cancelledTimers.push(id)});
   const client=source.slice(source.indexOf('  function stopDayProgress(){'),source.indexOf('  </script></body></html>'));
@@ -73,7 +73,7 @@ test('progress reads are scoped to the current undo run and tolerate unavailable
 
 test('HTML calls public day entry points rather than Apps Script private functions',()=>{
   const html=source.slice(source.indexOf('  const html=`'),source.indexOf('function confirmNewTrackerBelts_('));
-  assert.match(html,/\.beginDayTrackerRun\(tab\)/);assert.match(html,/\.generateDayBatch\(tab,batch,s,runId\)/);
+  assert.match(html,/\.beginDayTrackerRun\(tab\)/);assert.match(html,/\.generateDayBatch\(tab,batch,s,runId,dayCs1Selections\)/);
   assert.doesNotMatch(html,/\.(beginDayTrackerRun_|generateDayBatch_)\(/);
 });
 
@@ -86,10 +86,10 @@ test('one invalid student cannot prevent whole-day confirmation from reaching ge
 });
 
 test('whole-day warning appears immediately and scope selection has no missing-element references',()=>{
-  const ids=['dayWarning','choose','details','detailTitle','singleFields','summary','results','dayProgress','currentAction','done'];
+  const ids=['dayWarning','choose','details','detailTitle','singleFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'];
   const elements=Object.fromEntries(ids.map(id=>[id,{hidden:true,textContent:'',value:0}]));
   const choice={value:'day'};
-  const c=vm.createContext({scope:'selected',selectedName:'Oliver P',rows:[3,4],
+  const c=vm.createContext({scope:'selected',selectedName:'Oliver P',rows:[3,4],dayCs1Students:[],
     document:{querySelector:()=>choice},el:id=>{assert.ok(elements[id],'Missing element '+id);return elements[id];}});
   const functions=source.slice(source.indexOf('  function showDayWarning(){'),source.indexOf('  function goBack(){'));
   vm.runInContext(functions,c);c.showDayWarning();assert.equal(elements.dayWarning.hidden,false);
