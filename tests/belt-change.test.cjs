@@ -305,3 +305,136 @@ test('failed generation does not check Ready, including sharing and Undo-log fai
     assert.equal(h.ready,false);assert.equal(h.events.includes('ready'),false);
   }
 });
+
+async function beltFixture(c,course,student='Naveed F') {
+  const meta=vm.runInContext('TRACKER_FIELDS.'+course,c),pdf=await lib.PDFDocument.create(),page=pdf.addPage([612,2200]),form=pdf.getForm();
+  const texts=meta.type==='UNITY'?['Ninjas Name',...meta.rows.map(r=>r.note)]:['Text1','Text2','Date3_af_date','Text3','Text4'];
+  let y=2100;
+  for(const name of new Set(texts)){form.createTextField(name).addToPage(page,{x:100,y:y-=25,width:400,height:20});}
+  form.getTextField(meta.type==='UNITY'?'Ninjas Name':'Text1').setText(student);
+  const groups=meta.type==='UNITY'?[meta.rows.map(r=>r.status)]:meta.levels;
+  groups.forEach(names=>names.forEach((name,i)=>{
+    const field=form.getFieldMaybe(name)||form.createDropdown(name);field.setOptions(meta.type==='IMPACT'&&i===names.length-1?['R','L',' ']:['W','C','S','R',' ']);
+    field.addToPage(page,{x:20,y:y-=25,width:55,height:20});
+  }));
+  return {pdf,meta,bytes:Buffer.from(await pdf.save())};
+}
+function setJournalBelt(h,current,previous,project,tasks) {
+  const sheet=h.ss.getSheetByName('10-10'),original=sheet.getRange;
+  sheet.getRange=(r,c,nr,nc)=>nr===1&&nc===5?
+    {getDisplayValues:()=>[['Naveed F',previous,'',current,project]]}:original(r,c,nr,nc);
+  h.c.getCurriculum_=()=>({course:current,tasks});
+  h.c.getSessionDate_=()=>({iso:'2026-10-24',short:'10/24/26'});
+}
+async function configureUnity(h,{previous='UNITY_Platinum',current='UNITY_Platinum'}={}) {
+  const old=await beltFixture(h.c,previous),blank=await beltFixture(h.c,current,'');
+  h.source.name=`Naveed F ${previous.split('_')[1]} Belt Unity Tracker.pdf`;h.source.bytes=old.bytes;
+  h.template.name=`${current.split('_')[1]} Belt Unity Template.pdf`;h.template.bytes=blank.bytes;
+  vm.runInContext(`CONFIG.TEMPLATES.${current}='templateOrange'`,h.c);
+  const tasks=blank.meta.rows.map((r,i)=>'Unity project '+(i+1));
+  setJournalBelt(h,current,previous,tasks[1],tasks);
+  return {old,blank};
+}
+
+test('Unity current project saves visible Working date and preceding projects become C with dated text',async()=>{
+  const h=await harness(),{old}=await configureUnity(h);await h.run();
+  const saved=await lib.PDFDocument.load(h.source.bytes),form=saved.getForm();
+  assert.equal(form.getDropdown(old.meta.rows[0].status).getSelected()[0],'C');
+  assert.equal(form.getTextField(old.meta.rows[0].note).getText(),'Completed 10/24/2026');
+  assert.equal(form.getDropdown(old.meta.rows[1].status).getSelected()[0],'W');
+  assert.equal(form.getTextField(old.meta.rows[1].note).getText(),'Working 10/24/2026');
+  assert.equal(form.getDropdown(old.meta.rows[2].status).getSelected()[0]||'','');
+  const {PDFName,decodePDFRawStream}=lib;
+  const widget=form.getTextField(old.meta.rows[1].note).acroField.getWidgets()[0];
+  const stream=widget.dict.lookup(PDFName.of('AP')).lookup(PDFName.of('N'));
+  const appearance=Buffer.from(decodePDFRawStream(stream).decode()).toString();
+  assert.match(appearance,new RegExp(Buffer.from('Working 10/24/2026').toString('hex'),'i'));
+});
+
+test('Unity promotion puts an all-completed dated previous card in the child folder and keeps the original intact',async()=>{
+  const h=await harness(),{old}=await configureUnity(h,{previous:'UNITY_Silver'}),before=Buffer.from(h.source.bytes);
+  await h.run();const rec=h.records[0];assert.ok(rec.archiveId);assert.deepEqual(h.source.bytes,before);
+  const archived=(await lib.PDFDocument.load(h.files.get(rec.archiveId).bytes)).getForm();
+  for(const row of old.meta.rows){assert.equal(archived.getDropdown(row.status).getSelected()[0],'C');assert.equal(archived.getTextField(row.note).getText(),'Completed 10/24/2026');}
+  const current=(await lib.PDFDocument.load(h.files.get(rec.fileId).bytes)).getForm();
+  assert.equal(current.getTextField('undefined_2').getText(),'Working 10/24/2026');
+  h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss);
+  assert.equal(h.files.get(rec.archiveId).trashed,true);assert.deepEqual(h.source.bytes,before);assert.equal(h.link,h.originalLink);
+});
+
+test('IMPACT promotion also completes every prior work/level-up field and writes a dated Completed note',async()=>{
+  const h=await harness(),old=await beltFixture(h.c,'IMPACT_Yellow');
+  old.pdf.getForm().getDropdown('Dropdown1').select('S');
+  h.source.bytes=Buffer.from(await old.pdf.save());h.source.name='Naveed F Yellow Belt IMPACT Tracker.pdf';
+  const before=Buffer.from(h.source.bytes);await h.run();const rec=h.records[0];
+  const archived=(await lib.PDFDocument.load(h.files.get(rec.archiveId).bytes)).getForm();
+  for(const names of old.meta.levels)for(let i=0;i<names.length;i++)
+    assert.equal(archived.getDropdown(names[i]).getSelected()[0],i===names.length-1?'L':'C');
+  assert.equal(archived.getTextField('Text3').getText(),'Completed 10/10/2026');
+  assert.deepEqual(h.source.bytes,before);
+});
+
+async function promotionInExistingFolder(options={}) {
+  const h=await harness({folderLink:true,...options}),old=await beltFixture(h.c,'IMPACT_Yellow');
+  h.source.name='Naveed F Yellow Belt IMPACT Tracker.pdf';h.source.bytes=old.bytes;
+  setJournalBelt(h,'IMPACT_Orange','IMPACT_Yellow','Lvl 1 Build 1',['Lvl 1 Build 1']);
+  return h;
+}
+
+test('existing student folder completes the prior belt in place and Undo restores it along with the new card/link',async()=>{
+  const h=await promotionInExistingFolder(),before=Buffer.from(h.source.bytes);await h.run();const rec=h.records[0];
+  assert.equal(rec.previousBeltCompletion.fileId,h.source.getId());assert.ok(rec.previousBeltCompletion.backupId);
+  const old=(await lib.PDFDocument.load(h.source.bytes)).getForm();assert.equal(old.getTextField('Text3').getText(),'Completed 10/24/2026');
+  h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss);
+  assert.deepEqual(h.source.bytes,before);assert.equal(h.files.get(rec.fileId).trashed,true);assert.equal(h.link,h.originalLink);
+});
+
+test('failed generation rolls back the completed previous belt when the Undo log cannot be saved',async()=>{
+  for(const currentOrange of [false,true]){
+    const h=await promotionInExistingFolder({currentOrange,logFailure:true}),before=Buffer.from(h.source.bytes);
+    const currentBefore=currentOrange?Buffer.from(h.orange.bytes):null;
+    await assert.rejects(h.run(),/Undo log unavailable/);assert.deepEqual(h.source.bytes,before);
+    if(currentOrange)assert.deepEqual(h.orange.bytes,currentBefore);
+    assert.equal(h.link,h.originalLink);assert.equal(h.ready,false);
+  }
+});
+
+test('Undo refuses to overwrite a previous belt edited since promotion',async()=>{
+  const h=await promotionInExistingFolder();await h.run();const rec=h.records[0];
+  h.source.bytes=Buffer.concat([h.source.bytes,Buffer.from('changed')]);
+  assert.throws(()=>h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss),/Previous belt PDF changed/);
+  assert.equal(h.files.get(rec.fileId).trashed,false);assert.equal(h.link,h.originalLink);
+});
+
+test('repeated generation preserves previous completion dates and does not complete a higher belt on downgrade',async()=>{
+  const h=await promotionInExistingFolder({currentOrange:true});await h.run();
+  const previous=Buffer.from(h.source.bytes);
+  h.c.getSessionDate_=()=>({iso:'2026-10-25',short:'10/25/26'});
+  await h.c.generateForRow_(h.ss.getSheetByName('10-10'),3,'W',0,{sensei:'Different Sensei',runId:'run'});
+  assert.deepEqual(h.source.bytes,previous);assert.equal(h.records[1].previousBeltCompletion,null);
+  const down=await harness(),before=Buffer.from(down.source.bytes);await down.run();
+  assert.deepEqual(down.files.get(down.records[0].archiveId).bytes,before);
+});
+
+
+test('Brown promotion completes shared source widgets without treating all-completed values as ambiguous',async()=>{
+  const h=await harness(),old=await beltFixture(h.c,'IMPACT_Brown'),next=await beltFixture(h.c,'IMPACT_Red','');
+  h.source.name='Naveed F Brown Belt IMPACT Tracker.pdf';h.source.bytes=old.bytes;
+  h.template.name='Red Belt IMPACT Template.pdf';h.template.bytes=next.bytes;
+  vm.runInContext("CONFIG.TEMPLATES.IMPACT_Red='templateOrange'",h.c);
+  setJournalBelt(h,'IMPACT_Red','IMPACT_Brown','Lvl 1 Build 1',['Lvl 1 Build 1']);
+  await h.run();const saved=(await lib.PDFDocument.load(h.files.get(h.records[0].archiveId).bytes)).getForm();
+  assert.equal(saved.getDropdown('Dropdown4A').getSelected()[0],'C');
+  assert.equal(saved.getDropdown('Dropdown4A').acroField.getWidgets().length,2);
+  assert.match(saved.getTextField('Text3').getText(),/^Completed /);
+});
+
+test('Undo of an existing current-belt update restores both current and previously completed belt PDFs',async()=>{
+  const h=await promotionInExistingFolder({currentOrange:true});
+  const beforeOld=Buffer.from(h.source.bytes),beforeCurrent=Buffer.from(h.orange.bytes);await h.run();const rec=h.records[0];
+  Object.assign(h.c,{LockService:{getDocumentLock:()=>({waitLock(){},releaseLock(){}})},
+    lastTrackerRun_:()=>({id:'run',count:1}),PropertiesService:{getScriptProperties:()=>({getProperty:()=>JSON.stringify(rec),deleteProperty(){}})},
+    SpreadsheetApp:{getActiveSpreadsheet:()=>h.ss},trackerRunKey_:()=> 'last'});
+  assert.equal(h.c.restoreLastTrackerRun_('run').restored,1);
+  assert.deepEqual(h.source.bytes,beforeOld);assert.deepEqual(h.orange.bytes,beforeCurrent);
+});

@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v32**. Replace the script and reload the sheet to use it.
+This revision is **v33**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -58,6 +58,34 @@ files and folders are not reshared. If Google rejects a needed sharing change
 and a fresh read cannot confirm public viewing, generation reports an error rather than
 marking the tracker updated. Undo restores tracker content/links; it does not
 revoke link viewing on existing files or folders.
+
+## Unity text and completed belts
+
+Unity's current project gets W and the text `Working MM/DD/YYYY` in its own note
+field (for example, `Working 10/24/2026`). Previous projects become C and get a
+dated Completed note when their text is blank or an automatic Working note.
+Custom notes entered in the popup are used on the current project instead.
+Existing dated completions retain their dates.
+
+On a forward belt change, the previous belt PDF is finalized before the new
+tracker is reported successful:
+
+- Unity: all project dropdowns become C and all project note fields say
+  `Completed MM/DD/YYYY`.
+- IMPACT: all work fields become C, review/level-up fields become L, and the
+  existing Notes fields receive `Completed MM/DD/YYYY`.
+
+For a direct old-PDF link, the completed version is stored in the new child's
+folder; the old original outside that folder remains intact. For an existing
+folder, column B identifies the previous belt to complete in place. This works
+when adding a new current-belt file or updating one already in the folder.
+Changing to an earlier belt does not complete the higher belt. Repeating an
+update does not replace an already-recorded completion date.
+
+Previous-belt changes in an existing folder are backed up as part of the same
+Undo action. Failed generation rolls them back, and Undo restores both affected
+PDFs. Edits made after generation prevent Undo from overwriting those files.
+The extra backup follows the same five-action retention policy below.
 
 ## Undo backup retention
 

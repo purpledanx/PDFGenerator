@@ -83,3 +83,13 @@ test('cleanup refuses any file outside the Undo folder or whose ID matches the s
     for(let i=0;i<5;i++)h.action();assert.equal(b.trashed,false);assert.ok(h.warnings.length>0);
   }
 });
+
+test('previous-belt completion backups expire with the same action as the current PDF backup',()=>{
+  for(const created of [false,true]){
+    const h=harness(),current=created?null:h.backup(),previous=h.backup(),id=h.c.beginTrackerRun_('10-10');
+    h.c.addTrackerUndoRecord_(id,{tab:'10-10',fileId:'current-student',created,backupId:current?.id,
+      archiveId:'archived-belt',previousBeltCompletion:{fileId:'previous-student',backupId:previous.id}});
+    for(let i=0;i<4;i++)h.action();assert.equal(previous.trashed,false);
+    h.action();assert.equal(previous.trashed,true);if(current)assert.equal(current.trashed,true);
+  }
+});

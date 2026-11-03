@@ -33,7 +33,7 @@ const CONFIG = {
 const TRACKER_FIELDS = {"IMPACT_Black":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3"]]},"IMPACT_Blue":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"],["Dropdown25","Dropdown35","Dropdown45"]]},"IMPACT_Brown":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55","Dropdown65","Dropdown75","Dropdown85"],["Dropdown16","Dropdown26","Dropdown36","Dropdown46","Dropdown56","Dropdown66"],["Dropdown17","Dropdown27","Dropdown37","Dropdown47","Dropdown57","Dropdown67"],["Dropdown18","Dropdown28","Dropdown38","Dropdown58","Dropdown68"],["Dropdown19","Dropdown29","Dropdown39","Dropdown49","Dropdown59"],["Dropdown1A","Dropdown2A","Dropdown3A","Dropdown4A","Dropdown4A","Dropdown5A"]]},"IMPACT_Green":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44"]]},"IMPACT_Orange":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54"]]},"IMPACT_Purple":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5","Dropdown6"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52","Dropdown62"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53","Dropdown63"],["Dropdown14","Dropdown24","Dropdown34","Dropdown44","Dropdown54","Dropdown64"],["Dropdown15","Dropdown25","Dropdown35","Dropdown45","Dropdown55"]]},"IMPACT_Red":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51","Dropdown61"]]},"IMPACT_White":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown43","Dropdown53"]]},"IMPACT_Yellow":{"type":"IMPACT","levels":[["Dropdown1","Dropdown2","Dropdown3","Dropdown4","Dropdown5"],["Dropdown11","Dropdown21","Dropdown31","Dropdown41","Dropdown51"],["Dropdown12","Dropdown22","Dropdown32","Dropdown42","Dropdown52"],["Dropdown13","Dropdown23","Dropdown33","Dropdown53"]]},"UNITY_Bronze":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"1"},{"status":"Dropdown16","note":"2"},{"status":"Dropdown17","note":"undefined_15"},{"status":"Dropdown18","note":"undefined_16"},{"status":"Dropdown19","note":"undefined_17"},{"status":"Dropdown20","note":"undefined_18"}]},"UNITY_Gold":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"}]},"UNITY_Platinum":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"}]},"UNITY_Silver":{"type":"UNITY","rows":[{"status":"Dropdown0","note":"undefined"},{"status":"Dropdown1","note":"undefined_2"},{"status":"Dropdown2","note":"undefined_3"},{"status":"Dropdown3","note":"undefined_4"},{"status":"Dropdown4","note":"undefined_5"},{"status":"Dropdown5","note":"undefined_6"},{"status":"Dropdown6","note":"undefined_7"},{"status":"Dropdown7","note":"undefined_8"},{"status":"Dropdown8","note":"undefined_9"},{"status":"Dropdown9","note":"undefined_10"},{"status":"Dropdown11","note":"undefined_11"},{"status":"Dropdown12","note":"undefined_12"},{"status":"Dropdown13","note":"undefined_13"},{"status":"Dropdown14","note":"undefined_14"},{"status":"Dropdown15","note":"undefined_15"},{"status":"Dropdown16","note":"undefined_16"},{"status":"Dropdown17","note":"undefined_17"},{"status":"Dropdown18","note":"undefined_18"},{"status":"Dropdown19","note":"undefined_19"},{"status":"Dropdown20","note":"undefined_20"},{"status":"Dropdown21","note":"undefined_21"},{"status":"Dropdown22","note":"undefined_22"},{"status":"Dropdown23","note":"undefined_23"},{"status":"Dropdown24","note":"undefined_24"},{"status":"Dropdown25","note":"undefined_25"},{"status":"Dropdown26","note":"undefined_26"},{"status":"Dropdown27","note":"undefined_27"},{"status":"Dropdown28","note":"undefined_28"},{"status":"Dropdown29","note":"undefined_29"},{"status":"Dropdown30","note":"undefined_30"},{"status":"Dropdown31","note":"undefined_31"},{"status":"Dropdown32","note":"undefined_32"}]},"CS_1":{"type":"CS1","rows":[{"check":"Check Box1","date":"Date9_af_date","by":"Text10"},{"check":"Check Box2","date":"Date11_af_date","by":"Text18"},{"check":"Check Box3","date":"Date12_af_date","by":"Text19"},{"check":"Check Box4","date":"Date13_af_date","by":"Text20"},{"check":"Check Box5","date":"Date14_af_date","by":"Text21"},{"check":"Check Box6","date":"Date15_af_date","by":"Text22"},{"check":"Check Box7","date":"Date16_af_date","by":"Text23"},{"check":"Check Box8","date":"Date17_af_date","by":"Text24"},{"check":"Check Box25","date":"Date33_af_date","by":"Text41"},{"check":"Check Box26","date":"Date34_af_date","by":"Text42"},{"check":"Check Box27","date":"Date35_af_date","by":"Text43"},{"check":"Check Box28","date":"Date36_af_date","by":"Text44"},{"check":"Check Box29","date":"Date37_af_date","by":"Text45"},{"check":"Check Box30","date":"Date38_af_date","by":"Text46"},{"check":"Check Box31","date":"Date39_af_date","by":"Text47"},{"check":"Check Box32","date":"Date40_af_date","by":"Text48"},{"check":"Check Box49","date":"Date57_af_date","by":"Text65"},{"check":"Check Box50","date":"Date58_af_date","by":"Text66"},{"check":"Check Box51","date":"Date59_af_date","by":"Text67"},{"check":"Check Box52","date":"Date60_af_date","by":"Text68"},{"check":"Check Box53","date":"Date61_af_date","by":"Text69"},{"check":"Check Box54","date":"Date62_af_date","by":"Text70"},{"check":"Check Box55","date":"Date63_af_date","by":"Text71"},{"check":"Check Box56","date":"Date64_af_date","by":"Text72"},{"check":"Check Box73","date":"Date81_af_date","by":"Text89"},{"check":"Check Box74","date":"Date82_af_date","by":"Text90"},{"check":"Check Box75","date":"Date83_af_date","by":"Text91"},{"check":"Check Box76","date":"Date84_af_date","by":"Text92"},{"check":"Check Box77","date":"Date85_af_date","by":"Text93"},{"check":"Check Box78","date":"Date86_af_date","by":"Text94"},{"check":"Check Box79","date":"Date87_af_date","by":"Text95"},{"check":"Check Box80","date":"Date88_af_date","by":"Text96"},{"check":"Check Box97","date":"Date105_af_date","by":"Text113"},{"check":"Check Box98","date":"Date106_af_date","by":"Text114"},{"check":"Check Box99","date":"Date107_af_date","by":"Text115"},{"check":"Check Box100","date":"Date108_af_date","by":"Text116"},{"check":"Check Box101","date":"Date109_af_date","by":"Text117"},{"check":"Check Box102","date":"Date110_af_date","by":"Text118"},{"check":"Check Box103","date":"Date111_af_date","by":"Text119"},{"check":"Check Box104","date":"Date112_af_date","by":"Text120"},{"check":"Check Box121","date":"Date129_af_date","by":"Text137"},{"check":"Check Box122","date":"Date130_af_date","by":"Text138"},{"check":"Check Box123","date":"Date131_af_date","by":"Text139"},{"check":"Check Box124","date":"Date132_af_date","by":"Text140"},{"check":"Check Box125","date":"Date133_af_date","by":"Text141"},{"check":"Check Box126","date":"Date134_af_date","by":"Text142"},{"check":"Check Box127","date":"Date135_af_date","by":"Text143"},{"check":"Check Box128","date":"Date136_af_date","by":"Text144"},{"check":"Check Box145","date":"Date153_af_date","by":"Text161"},{"check":"Check Box146","date":"Date154_af_date","by":"Text162"},{"check":"Check Box147","date":"Date155_af_date","by":"Text163"},{"check":"Check Box148","date":"Date156_af_date","by":"Text164"},{"check":"Check Box149","date":"Date157_af_date","by":"Text165"},{"check":"Check Box150","date":"Date158_af_date","by":"Text166"},{"check":"Check Box151","date":"Date159_af_date","by":"Text167"},{"check":"Check Box152","date":"Date160_af_date","by":"Text168"}]},"JR":{"type":"JR","rows":[{"date":"Date3_af_date","stars":["Check Box5","Check Box6","Check Box7"],"comment":"Text8"},{"date":"Date4_af_date","stars":["Check Box8","Check Box9","Check Box10"],"comment":"Text10"},{"date":"Date5_af_date","stars":["Check Box12","Check Box13","Check Box14"],"comment":"Text11"},{"date":"Date6_af_date","stars":["Check Box15","Check Box16","Check Box17"],"comment":"Text12"},{"date":"Date7_af_date","stars":["Check Box18","Check Box19","Check Box20"],"comment":"Text13"},{"date":"Date203_af_date","stars":["Check Box205","Check Box206","Check Box207"],"comment":"Text208"},{"date":"Date204_af_date","stars":["Check Box208","Check Box209","Check Box2010"],"comment":"Text2010"},{"date":"Date205_af_date","stars":["Check Box2012","Check Box2013","Check Box2014"],"comment":"Text2011"},{"date":"Date206_af_date","stars":["Check Box2015","Check Box2016","Check Box2017"],"comment":"Text2012"},{"date":"Date207_af_date","stars":["Check Box2018","Check Box2019","Check Box2020"],"comment":"Text2013"},{"date":"Date303_af_date","stars":["Check Box305","Check Box306","Check Box307"],"comment":"Text308"},{"date":"Date304_af_date","stars":["Check Box308","Check Box309","Check Box3010"],"comment":"Text3010"},{"date":"Date305_af_date","stars":["Check Box3012","Check Box3013","Check Box3014"],"comment":"Text3011"},{"date":"Date306_af_date","stars":["Check Box3015","Check Box3016","Check Box3017"],"comment":"Text3012"},{"date":"Date307_af_date","stars":["Check Box3018","Check Box3019","Check Box3020"],"comment":"Text3013"},{"date":"Date403_af_date","stars":["Check Box405","Check Box406","Check Box407"],"comment":"Text408"},{"date":"Date404_af_date","stars":["Check Box408","Check Box409","Check Box4010"],"comment":"Text4010"},{"date":"Date405_af_date","stars":["Check Box4012","Check Box4013","Check Box4014"],"comment":"Text4011"},{"date":"Date406_af_date","stars":["Check Box4015","Check Box4016","Check Box4017"],"comment":"Text4012"},{"date":"Date407_af_date","stars":["Check Box4018","Check Box4019","Check Box4020"],"comment":"Text4013"},{"date":"Date503_af_date","stars":["Check Box505","Check Box506","Check Box507"],"comment":"Text508"},{"date":"Date504_af_date","stars":["Check Box508","Check Box509","Check Box5010"],"comment":"Text5010"},{"date":"Date505_af_date","stars":["Check Box5012","Check Box5013","Check Box5014"],"comment":"Text5011"},{"date":"Date506_af_date","stars":["Check Box5015","Check Box5016","Check Box5017"],"comment":"Text5012"},{"date":"Date507_af_date","stars":["Check Box5018","Check Box5019","Check Box5020"],"comment":"Text5013"},{"date":"Date603_af_date","stars":["Check Box605","Check Box606","Check Box607"],"comment":"Text608"},{"date":"Date604_af_date","stars":["Check Box608","Check Box609","Check Box6010"],"comment":"Text6010"},{"date":"Date605_af_date","stars":["Check Box6012","Check Box6013","Check Box6014"],"comment":"Text6011"},{"date":"Date606_af_date","stars":["Check Box6015","Check Box6016","Check Box6017"],"comment":"Text6012"},{"date":"Date607_af_date","stars":["Check Box6018","Check Box6019","Check Box6020"],"comment":"Text6013"},{"date":"Date703_af_date","stars":["Check Box705","Check Box706","Check Box707"],"comment":"Text708"},{"date":"Date704_af_date","stars":["Check Box708","Check Box709","Check Box7010"],"comment":"Text7010"},{"date":"Date705_af_date","stars":["Check Box7012","Check Box7013","Check Box7014"],"comment":"Text7011"},{"date":"Date706_af_date","stars":["Check Box7015","Check Box7016","Check Box7017"],"comment":"Text7012"},{"date":"Date707_af_date","stars":["Check Box7018","Check Box7019","Check Box7020"],"comment":"Text7013"},{"date":"Date803_af_date","stars":["Check Box805","Check Box806","Check Box807"],"comment":"Text808"},{"date":"Date804_af_date","stars":["Check Box808","Check Box809","Check Box8010"],"comment":"Text8010"},{"date":"Date805_af_date","stars":["Check Box8012","Check Box8013","Check Box8014"],"comment":"Text8011"},{"date":"Date806_af_date","stars":["Check Box8015","Check Box8016","Check Box8017"],"comment":"Text8012"},{"date":"Date807_af_date","stars":["Check Box8018","Check Box8019","Check Box8020"],"comment":"Text8013"}]}};
 
 var PDF_LIB_CACHE_ = null;
-const TRACKER_GENERATOR_VERSION_ = 'v32';
+const TRACKER_GENERATOR_VERSION_ = 'v33';
 const TRACKER_UNDO_ACTION_LIMIT_ = 5;
 
 function onOpen() {
@@ -754,27 +754,40 @@ function shareTrackerViewLinks_(file,folder) {
   } else if(file) allowViewing(file);
 }
 
-function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLink,previousBytes,previousName,onProgress=()=>{}) {
+function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLink,previousBytes,previousName,onProgress=()=>{},completion=null) {
   const source=location.file;
+  let previousUpdate=null;
+  const existingCompletion=completion && location.folder?completion:null;
   if(!createNew) {
     onProgress('Backing up the current tracker');
     const backup=getUndoFolder_().createFile(Utilities.newBlob(previousBytes,'application/pdf','BACKUP '+Date.now()+' '+previousName));
     if(!backup.getId()) throw new Error('Backup failed. Original PDF not changed.');
     let updated=false;
     try {
+      previousUpdate=backupBeltCompletion_(existingCompletion);
       onProgress('Enabling anyone-with-link viewing');
       shareTrackerViewLinks_(source,location.folder);
       onProgress('Uploading the updated PDF');
       updateDrivePdf_(source.getId(),blob);
       updated=true;
       if(record.fileName!==previousName) source.setName(record.fileName);
-      addTrackerUndoRecord_(runId,Object.assign({},record,{fileId:source.getId(),backupId:backup.getId(),previousFileName:previousName}));
+      if(previousUpdate){
+        onProgress('Saving the completed previous belt');
+        updateDrivePdf_(previousUpdate.record.fileId,existingCompletion.blob);previousUpdate.applied=true;
+      }
+      addTrackerUndoRecord_(runId,Object.assign({},record,{fileId:source.getId(),backupId:backup.getId(),previousFileName:previousName,
+        previousBeltCompletion:previousUpdate?previousUpdate.record:null}));
     } catch(error) {
+      let completionError=null;
+      try {if(previousUpdate && previousUpdate.applied)restoreBeltCompletion_(previousUpdate.record,false);}
+      catch(restoreError){completionError=restoreError;}
       if(updated) {
         try {updateDrivePdf_(source.getId(),backup.getBlob());source.setName(previousName);}
         catch(restoreError) {throw new Error('Update failed and rollback failed. Backup: '+backup.getUrl()+'. '+restoreError.message);}
       }
 
+      if(completionError)throw new Error('Previous belt rollback failed. Backup: '+previousUpdate.backup.getUrl()+'. '+completionError.message);
+      if(previousUpdate)previousUpdate.backup.setTrashed(true);
       try {backup.setTrashed(true);} catch(cleanupError) {console.warn('Could not remove unused Undo backup: '+cleanupError.message);}
       throw error;
     }
@@ -783,6 +796,7 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
   let folder=location.folder,createdFolder=null,archive=null,created=null,linkChanged=false;
   const linkState={previousLink,linkFormula:cell.getFormula(),linkText:cell.getDisplayValue()};
   try {
+    previousUpdate=backupBeltCompletion_(existingCompletion);
     if(!folder) {
       onProgress('Creating the student folder and keeping the old tracker');
       const parents=source?source.getParents():null;
@@ -792,7 +806,12 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
 
       const oldCourse=source?programFromName_(previousName):null;
 
-      if(source) archive=source.makeCopy(oldCourse?trackerFilename_(record.student,oldCourse):previousName,folder);
+      if(source){
+        if(completion && completion.file.getId()===source.getId()) {
+          archive=folder.createFile(completion.blob);
+          archive.setName(oldCourse?trackerFilename_(record.student,oldCourse):previousName);
+        } else archive=source.makeCopy(oldCourse?trackerFilename_(record.student,oldCourse):previousName,folder);
+      }
     }
     onProgress('Creating the new belt PDF');
     created=folder.createFile(blob);
@@ -800,6 +819,10 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
 
     onProgress('Enabling anyone-with-link viewing');
     shareTrackerViewLinks_(created,folder);
+    if(previousUpdate){
+      onProgress('Saving the completed previous belt');
+      updateDrivePdf_(previousUpdate.record.fileId,existingCompletion.blob);previousUpdate.applied=true;
+    }
     onProgress('Updating the tracker link in the journal');
     const folderUrl=folder.getUrl();
     linkChanged=true;
@@ -807,16 +830,19 @@ function persistTrackerPdf_(location,blob,record,runId,createNew,cell,previousLi
     addTrackerUndoRecord_(runId,Object.assign({},record,linkState,{
       created:true,fileId:created.getId(),folderId:folder.getId(),
       createdFolderId:createdFolder?createdFolder.getId():null,
-      archiveId:archive?archive.getId():null,archiveHash:archive?hashPdfBytes_(previousBytes):null,
+      archiveId:archive?archive.getId():null,archiveHash:archive?hashPdfBytes_(archive.getBlob().getBytes()):null,
+      previousBeltCompletion:previousUpdate?previousUpdate.record:null,
       linkColumn:cell.getColumn(),afterLink:folderUrl
     }));
     return {url:folderUrl};
   } catch(error) {
     try {
+      if(previousUpdate && previousUpdate.applied)restoreBeltCompletion_(previousUpdate.record,false);
       if(linkChanged) restoreTrackerLink_(cell,linkState);
       if(created) created.setTrashed(true);
       if(archive) archive.setTrashed(true);
       if(createdFolder) createdFolder.setTrashed(true);
+      if(previousUpdate)previousUpdate.backup.setTrashed(true);
     } catch(restoreError) {throw new Error('Folder update failed and cleanup failed: '+restoreError.message+'. '+error.message);}
     throw error;
   }
@@ -831,6 +857,7 @@ function undoCreatedTracker_(rec,file,ss) {
   const archive=rec.archiveId?DriveApp.getFileById(rec.archiveId):null;
   if(archive && hashPdfBytes_(archive.getBlob().getBytes())!==rec.archiveHash)
     throw new Error('Archived tracker changed since generation; left unchanged.');
+  restoreBeltCompletion_(rec.previousBeltCompletion);
   restoreTrackerLink_(cell,rec);
   file.setTrashed(true);
   if(archive) archive.setTrashed(true);
@@ -1103,6 +1130,90 @@ function applyImpact_(form,meta,course,task,allTasks,status,sensei,date,student,
     : notes || (date.short+' '+sensei+': '+status+' '+task);
   writeImpactNotes_(form,note,warnings);
 }
+function trackerFullDate_(date) {
+  const iso=String(date.iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(iso)return iso[2]+'/'+iso[3]+'/'+iso[1];
+  const short=String(date.short||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if(!short)throw new Error('Missing session date for tracker text.');
+  return short[1].padStart(2,'0')+'/'+short[2].padStart(2,'0')+'/'+(short[3].length===2?'20':'')+short[3];
+}
+function isTrackerBeltPromotion_(previous,current) {
+  const order=['IMPACT_White','IMPACT_Yellow','IMPACT_Orange','IMPACT_Green','IMPACT_Blue','IMPACT_Purple',
+    'IMPACT_Brown','IMPACT_Red','IMPACT_Black','UNITY_Bronze','UNITY_Silver','UNITY_Platinum','UNITY_Gold'];
+  const from=order.findIndex(c=>norm_(c)===norm_(previous)),to=order.findIndex(c=>norm_(c)===norm_(current));
+  return from>=0 && to>from;
+}
+async function prepareCompletedBelt_(file,course,student,sensei,date,lib) {
+  if(Object.values(CONFIG.TEMPLATES).includes(file.getId()))throw new Error('A blank template cannot be completed as a student tracker.');
+  const before=file.getBlob().getBytes();
+  const pdf=await lib.PDFDocument.load(new Uint8Array(before),{objectsPerTick:Infinity});
+  const form=pdf.getForm(),meta=TRACKER_FIELDS[course];
+  if(!meta || !['UNITY','IMPACT'].includes(meta.type))return null;
+  setIfBlankOrSame_(fieldOrThrow_(form,meta.type==='UNITY'?'Ninjas Name':'Text1'),student,'Ninja',true);
+  const text='Completed '+trackerFullDate_(date),expectedText={};let changed=false;
+  function setText(name,value) {
+    const field=fieldOrThrow_(form,name);
+    if(String(field.getText()||'')!==value){field.setText(value);changed=true;}
+    expectedText[name]=value;
+  }
+  function completedNote(name) {
+    const old=String(fieldOrThrow_(form,name).getText()||'').trim();
+    setText(name,/^Completed \d{2}\/\d{2}\/\d{4}$/.test(old)?old:text);
+  }
+  const names=meta.type==='UNITY'?meta.rows.map(r=>r.status):meta.levels.flat();
+  const expectedFields={};
+  for(const name of new Set(names)) {
+    const matches=form.getFields().filter(field=>field.getName()===name);
+    if(!matches.length)throw new Error('Missing previous belt field '+name);
+    expectedFields[name]=[];
+    for(const field of matches) {
+      if(typeof field.getOptions!=='function')throw new Error('Incorrect previous belt field type: '+name);
+      const options=field.getOptions(),value=options.includes('C')?'C':options.includes('L')?'L':null;
+      if(!value)throw new Error('No completion option for previous belt field '+name);
+      if(readDropdown_(field)!==value){field.select(value);changed=true;}
+      expectedFields[name].push(value);
+    }
+  }
+  if(meta.type==='UNITY')for(const row of meta.rows)completedNote(row.note);
+  else {
+    const old=String(fieldOrThrow_(form,'Text3').getText()||'').trim();
+    if(!/^Completed \d{2}\/\d{2}\/\d{4}$/.test(old)){
+      setText('Text2',sensei);setText('Date3_af_date',date.short);
+    }
+    completedNote('Text3');setText('Text4','');
+  }
+  if(!changed)return null;
+  const expected=getProgressSnapshot_(form,meta);
+  form.updateFieldAppearances(await pdf.embedFont(lib.StandardFonts.Helvetica));
+  const bytes=await pdf.save({objectsPerTick:Infinity});
+  const check=(await lib.PDFDocument.load(bytes,{objectsPerTick:Infinity})).getForm();
+  const actual=getProgressSnapshot_(check,meta);
+  for(const name of Object.keys(expected))if(expected[name]!==actual[name])throw new Error('Previous belt completion failed to save: '+name);
+  for(const name of Object.keys(expectedFields)) {
+    const values=check.getFields().filter(field=>field.getName()===name).map(readDropdown_);
+    if(JSON.stringify(values)!==JSON.stringify(expectedFields[name]))throw new Error('Previous belt duplicate field failed to save: '+name);
+  }
+  for(const name of Object.keys(expectedText))if(String(check.getTextField(name).getText()||'')!==expectedText[name])
+    throw new Error('Previous belt completion text failed to save: '+name);
+  return {file,before,blob:Utilities.newBlob(Array.from(new Int8Array(bytes)),'application/pdf',file.getName())};
+}
+function backupBeltCompletion_(completion) {
+  if(!completion)return null;
+  if(hashPdfBytes_(completion.file.getBlob().getBytes())!==hashPdfBytes_(completion.before))
+    throw new Error('Previous belt changed during generation. Please retry.');
+  const backup=getUndoFolder_().createFile(Utilities.newBlob(completion.before,'application/pdf','BACKUP '+Date.now()+' '+completion.file.getName()));
+  if(!backup.getId())throw new Error('Could not back up the previous belt.');
+  return {backup,applied:false,record:{fileId:completion.file.getId(),backupId:backup.getId(),
+    fileName:completion.file.getName(),afterHash:hashPdfBytes_(completion.blob.getBytes())}};
+}
+function restoreBeltCompletion_(record,checkChanges=true) {
+  if(!record)return;
+  const file=DriveApp.getFileById(record.fileId);
+  if(checkChanges && hashPdfBytes_(file.getBlob().getBytes())!==record.afterHash)
+    throw new Error('Previous belt PDF changed since generation; left unchanged.');
+  updateDrivePdf_(record.fileId,DriveApp.getFileById(record.backupId).getBlob());
+}
+
 function applyUnity_(form,meta,index,status,sensei,date,student,notes,warnings) {
   setIfBlankOrSame_(fieldOrThrow_(form,'Ninjas Name'),student,'Ninja',true);
   const row=meta.rows[index];
@@ -1112,18 +1223,19 @@ function applyUnity_(form,meta,index,status,sensei,date,student,notes,warnings) 
     const name=meta.rows[i].status;
     const old=readDropdown_(fieldOrThrow_(form,name,'dropdown'));
     if(i===index) updateDropdown_(form,name,'W',warnings,true);
-    else if(old==='W') updateDropdown_(form,name,i<index?'C':' ',warnings,true);
+    else if(i<index && old!=='S') {
+      updateDropdown_(form,name,'C',warnings,true);
+      const note=fieldOrThrow_(form,meta.rows[i].note),text=String(note.getText()||'').trim();
+      if(!text || /^Working(?:\s|!|$)/i.test(text)) note.setText('Completed '+trackerFullDate_(date));
+    } else if(i>index && (old==='W' || old==='R')) {
+      updateDropdown_(form,name,' ',warnings,true);
+      const note=fieldOrThrow_(form,meta.rows[i].note);
+      if(/^Working(?:\s|!|$)/i.test(String(note.getText()||'').trim())) note.setText('');
+    }
   }
-  if(String(notes||'').trim()) {
+  const working='Working '+trackerFullDate_(date);
+  fieldOrThrow_(form,row.note).setText(String(notes||'').trim() || working);
 
-    tryNoteField_(form,row.note,String(notes).trim(),warnings);
-  } else {
-
-    try {
-      const f=form.getTextField(row.note);
-      if(/^Working on .+!$/i.test(String(f.getText()||'').trim())) f.setText('');
-    } catch(e) {                                            }
-  }
 }
 
 function applyCS1_(form,meta,index,status,sensei,date,student,notes,warnings) {
@@ -1246,6 +1358,18 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const form=pdf.getForm(), warnings=[];
   const createNew=!source || prepared.replaced;
   const outputName=prepared.replaced || !source ? trackerFilename_(student,course) : previousName;
+  let completion=null;
+  const linkedCourse=source?programFromName_(source.getName()):null;
+  const previousCourse=isTrackerBeltPromotion_(linkedCourse,course)?linkedCourse:
+    isTrackerBeltPromotion_(values[1],course)?Object.keys(TRACKER_FIELDS).find(c=>norm_(c)===norm_(values[1])):null;
+  if(previousCourse) {
+    const previousFile=source && linkedCourse===previousCourse?source:
+      location.folder?locateTracker_(location.folder.getUrl(),previousCourse,student).file:null;
+    if(previousFile) {
+      progress('Completing the previous belt tracker');
+      completion=await prepareCompletedBelt_(previousFile,previousCourse,student,sensei,date,lib);
+    } else warnings.push('Previous belt tracker not found; no previous belt PDF was completed.');
+  }
   progress('Filling project markers and notes');
   if(meta.type==='IMPACT') applyImpact_(form,meta,course,task,curriculum.tasks,status,sensei,date,student,notes,warnings);
   else if(meta.type==='UNITY') applyUnity_(form,meta,idx,status,sensei,date,student,notes,warnings);
@@ -1286,6 +1410,9 @@ async function generateForRow_(sh,row,status,stars,overrides) {
       const field=meta.rows[idx].status;
       if(readDropdown_(checkForm.getDropdown(field))!=='W')
         throw new Error('PDF validation failed: Unity current project did not save as W. Original was not changed.');
+      for(const row of meta.rows)if(String(fieldOrThrow_(form,row.note).getText()||'')!==
+          String(fieldOrThrow_(checkForm,row.note).getText()||''))
+        throw new Error('PDF validation failed: Unity text did not save in '+row.note+'. Original was not changed.');
     }
   }
   const blob=Utilities.newBlob(Array.from(new Int8Array(newBytes)),
@@ -1295,7 +1422,7 @@ async function generateForRow_(sh,row,status,stars,overrides) {
   const record={tab:sh.getName(),row,student,project:task,statusBefore,
     fileName:outputName,afterHash:hashPdfBytes_(blob.getBytes())};
   const result=persistTrackerPdf_(location,blob,record,runId,createNew,
-    sh.getRange(row,trackerCol==='J'?10:9),trackerUrl,previousBytes,previousName,progress);
+    sh.getRange(row,trackerCol==='J'?10:9),trackerUrl,previousBytes,previousName,progress,completion);
   setTrackerIndicator_(sh,row,'PDF UPDATED',
     'Updated '+outputName+' on '+date.short+' using '+TRACKER_GENERATOR_VERSION_+
     '. Undo available from Tracker PDFs menu.');
@@ -1387,10 +1514,10 @@ function retainTrackerUndoRun_(run) {
         try {
           const record=JSON.parse(text);
 
-          if(record.backupId) {
-            if(record.backupId===record.fileId || Object.values(CONFIG.TEMPLATES).includes(record.backupId))
+          for(const saved of [record,record.previousBeltCompletion].filter(r=>r && r.backupId)) {
+            if(saved.backupId===record.fileId || saved.backupId===saved.fileId || Object.values(CONFIG.TEMPLATES).includes(saved.backupId))
               throw new Error('Undo backup ID refers to a tracker or template.');
-            const backup=DriveApp.getFileById(record.backupId);
+            const backup=DriveApp.getFileById(saved.backupId);
             const folderId=props.getProperty('TRACKER_PDF_UNDO_FOLDER');
             const parents=backup.getParents();let inUndoFolder=false;
             while(parents.hasNext()) if(parents.next().getId()===folderId) inUndoFolder=true;
@@ -1470,9 +1597,15 @@ function restoreLastTrackerRun_(expectedRunId) {
         if(rec.created) {
           undoCreatedTracker_(rec,file,ss);
         } else {
+          if(rec.previousBeltCompletion) {
+            const previous=DriveApp.getFileById(rec.previousBeltCompletion.fileId);
+            if(hashPdfBytes_(previous.getBlob().getBytes())!==rec.previousBeltCompletion.afterHash)
+              throw new Error('Previous belt PDF changed since generation; left unchanged.');
+          }
           const backup=DriveApp.getFileById(rec.backupId);
           updateDrivePdf_(rec.fileId,backup.getBlob());
           if(rec.previousFileName) file.setName(rec.previousFileName);
+          restoreBeltCompletion_(rec.previousBeltCompletion);
         }
         const sh=ss.getSheetByName(rec.tab);
         if(sh && sh.getRange(rec.row,1).getDisplayValue().trim()===rec.student) {
