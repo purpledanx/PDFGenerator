@@ -322,7 +322,8 @@ async function beltFixture(c,course,student='Naveed F') {
 function setJournalBelt(h,current,previous,project,tasks) {
   const sheet=h.ss.getSheetByName('10-10'),original=sheet.getRange;
   sheet.getRange=(r,c,nr,nc)=>nr===1&&nc===5?
-    {getDisplayValues:()=>[['Naveed F',previous,'',current,project]]}:original(r,c,nr,nc);
+    {getDisplayValues:()=>[['Naveed F',previous,'',current,project]]}:
+    !nr && c===4?{getDisplayValue:()=>current}:!nr && c===5?{getDisplayValue:()=>project}:original(r,c,nr,nc);
   h.c.getCurriculum_=()=>({course:current,tasks});
   h.c.getSessionDate_=()=>({iso:'2026-10-24',short:'10/24/26'});
 }
@@ -437,4 +438,31 @@ test('Undo of an existing current-belt update restores both current and previous
     SpreadsheetApp:{getActiveSpreadsheet:()=>h.ss},trackerRunKey_:()=> 'last'});
   assert.equal(h.c.restoreLastTrackerRun_('run').restored,1);
   assert.deepEqual(h.source.bytes,beforeOld);assert.deepEqual(h.orange.bytes,beforeCurrent);
+});
+
+
+test('single-student Unity generation accepts no Sensei and uses automatic text without supplied notes',async()=>{
+  const h=await harness();await configureUnity(h);
+  Object.assign(h.c,{SpreadsheetApp:{getActiveSpreadsheet:()=>h.ss},
+    LockService:{getDocumentLock:()=>({waitLock(){},releaseLock(){}})},
+    confirmNewTrackerBelts_:()=>true,ensurePdfStatusColumn_(){},beginTrackerRun_:()=> 'run'});
+  await h.c.generateFromPopup('10-10',3,'',0,'Do not add this note',null,'');
+  const saved=(await lib.PDFDocument.load(h.source.bytes)).getForm();
+  assert.equal(saved.getTextField('undefined_2').getText(),'Working 10/24/2026');assert.equal(h.ready,true);
+});
+
+test('Unity-only day generation and level-ups accept an empty Sensei',async()=>{
+  const h=await harness({folderLink:true});await configureUnity(h,{previous:'UNITY_Silver'});
+  Object.assign(h.c,{SpreadsheetApp:{getActiveSpreadsheet:()=>h.ss},
+    LockService:{getDocumentLock:()=>({waitLock(){},releaseLock(){}})},reportDayTrackerProgress_(){}});
+  const result=await h.c.generateDayBatch('10-10',[3],'','run');
+  assert.equal(result[0].ok,true,JSON.stringify(result));assert.equal(h.ready,true);
+  const old=(await lib.PDFDocument.load(h.source.bytes)).getForm();
+  assert.equal(old.getTextField('undefined').getText(),'Completed 10/24/2026');
+});
+
+test('non-Unity programs still require Sensei before any tracker is changed',async()=>{
+  const h=await harness();const before=Buffer.from(h.source.bytes);
+  await assert.rejects(h.c.generateForRow_(h.ss.getSheetByName('10-10'),3,'W',0,{sensei:'',runId:'run'}),/Sensei/);
+  assert.deepEqual(h.source.bytes,before);assert.equal(h.ready,false);
 });

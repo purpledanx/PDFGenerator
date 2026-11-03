@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v33**. Replace the script and reload the sheet to use it.
+This revision is **v34**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -61,10 +61,15 @@ revoke link viewing on existing files or folders.
 
 ## Unity text and completed belts
 
+Unity-only updates do not ask for a Sensei name or show a Notes input. This also
+applies to Unity-only whole-day runs. Mixed-program day runs retain the Sensei
+field for the programs that use it, and CS1 students retain their own controls.
+Unity's dated progress text is filled automatically rather than from a Notes
+section in the popup.
+
 Unity's current project gets W and the text `Working MM/DD/YYYY` in its own note
 field (for example, `Working 10/24/2026`). Previous projects become C and get a
 dated Completed note when their text is blank or an automatic Working note.
-Custom notes entered in the popup are used on the current project instead.
 Existing dated completions retain their dates.
 
 On a forward belt change, the previous belt PDF is finalized before the new

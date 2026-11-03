@@ -4,8 +4,8 @@ const fs=require('node:fs'),vm=require('node:vm'),lib=require('pdf-lib');
 const source=fs.readFileSync(require.resolve('../PDFGenerator.gs'),'utf8');
 const tasks=['Storytelling 1: Dialogue','Storytelling 2: Check It Out','Storytelling 3: Setting'];
 
-function render(selectedRow=3){
-  const data={3:['Oliver P','','','IMPACT_Yellow','Lvl 2 Build 1'],4:['Easton G','','','CS_1',tasks[1]],5:['Ada S','','','CS_1',tasks[2]]};
+function render(selectedRow=3,unityOnly=false){
+  const data=unityOnly?{3:['Parker N','','','UNITY_Platinum','Codey Raceway'],4:['Other Student','','','UNITY_Silver','Robomania'],5:['Another Student','','','UNITY_Bronze','Dropping Bombs']}:{3:['Oliver P','','','IMPACT_Yellow','Lvl 2 Build 1'],4:['Easton G','','','CS_1',tasks[1]],5:['Ada S','','','CS_1',tasks[2]]};
   const ss={getName:()=> 'Journal 10-2026'};
   const sheet={getName:()=> '10-29',getParent:()=>ss,getActiveRange:()=>({getRow:()=>selectedRow}),getLastRow:()=>5,
     getRange:(row,col,nr=1,nc=1)=>({getDisplayValue:()=>data[row]?.[col-1]||'',
@@ -24,10 +24,10 @@ test('whole-day CS1 forms render even when the selected student is on a differen
   assert.match(html,/id="dayCs14Complete"/);assert.match(html,/id="dayCs15Date"/);assert.match(html,/id="dayCs14Notes"/);
   assert.match(html,/<option value="1" disabled>Storytelling 2: Check It Out/);
   assert.doesNotThrow(()=>new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]));
-  const elements=Object.fromEntries(['dayWarning','choose','details','detailTitle','singleFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'].map(id=>[id,{}]));
+  const elements=Object.fromEntries(['dayWarning','choose','details','detailTitle','singleFields','senseiFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'].map(id=>[id,{}]));
   const choice={value:'day'};
   const c=vm.createContext({document:{querySelector:()=>choice},scope:'selected',selectedName:'Oliver P',rows:[3,4,5],
-    dayCs1Students:[{row:4},{row:5}],el:id=>elements[id]});
+    dayCs1Students:[{row:4},{row:5}],isUnity:false,dayNeedsSensei:true,el:id=>elements[id]});
   vm.runInContext(source.slice(source.indexOf('  function showDayWarning(){'),source.indexOf('  function goBack(){')),c);
   c.chooseScope();assert.equal(elements.dayCs1Fields.hidden,false);assert.equal(elements.singleFields.hidden,true);
   choice.value='selected';c.chooseScope();assert.equal(elements.dayCs1Fields.hidden,true);
@@ -126,5 +126,35 @@ test('CS1 notes default to Still working and change to Nice only when a completi
     fields[select].value='';c.updateCs1Notes(select,notes);assert.equal(fields[notes].value,'Still working.');
     fields[notes].value='Custom instructor note';fields[select].value='0';c.updateCs1Notes(select,notes);
     assert.equal(fields[notes].value,'Custom instructor note');
+  }
+});
+
+
+test('Unity forms hide Sensei and omit the Notes section, including Unity-only whole-day runs',()=>{
+  const {html}=render(3,true);
+  assert.match(html,/<div id="senseiFields" hidden>/);assert.doesNotMatch(html,/Notes for the PDF/);
+  const ids=['dayWarning','choose','details','detailTitle','singleFields','senseiFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'];
+  const fields=Object.fromEntries(ids.map(id=>[id,{}])),choice={value:'selected'};
+  const c=vm.createContext({document:{querySelector:()=>choice},el:id=>fields[id],scope:'selected',selectedName:'Parker N',
+    rows:[3,4,5],isUnity:true,dayNeedsSensei:false,dayCs1Students:[]});
+  vm.runInContext(source.slice(source.indexOf('  function showDayWarning(){'),source.indexOf('  function goBack(){')),c);
+  c.chooseScope();assert.equal(fields.senseiFields.hidden,true);
+  choice.value='day';c.chooseScope();assert.equal(fields.senseiFields.hidden,true);
+  c.dayNeedsSensei=true;c.chooseScope();assert.equal(fields.senseiFields.hidden,false);
+});
+
+test('dialog submits Unity updates with an empty Sensei and no Notes input, while mixed days still require Sensei',()=>{
+  for(const [scope,dayNeedsSensei,expected]of [['selected',false,'selected'],['day',false,'day'],['day',true,null]]){
+    const calls=[],fields={sensei:{value:''},summary:{textContent:''},results:{textContent:''},done:{hidden:true},dayProgress:{value:0},currentAction:{textContent:''}};
+    const run={withSuccessHandler(){return run;},withFailureHandler(){return run;},
+      generateFromPopup(...args){calls.push({kind:'selected',args});},beginDayTrackerRun(...args){calls.push({kind:'day',args});}};
+    const c=vm.createContext({scope,dayNeedsSensei,isUnity:true,isCS1:false,isScratchJr:false,running:false,undoBusy:false,
+      tab:'10-10',chosenRow:3,dayCs1Selections:{},completed:0,failed:0,cursor:0,
+      el:id=>{assert.ok(fields[id],'Unexpected field '+id);return fields[id];},buttonsDisabled(){},collectDayCs1Selections:()=>({}),
+      google:{script:{run}},processNextBatch(){},pollDayProgress(){}});
+    vm.runInContext(source.slice(source.indexOf('  function submitCards(){'),source.indexOf('  function stopDayProgress(){')),c);
+    c.submitCards();assert.equal(calls.length,expected?1:0);
+    if(expected)assert.equal(calls[0].kind,expected);else assert.match(fields.summary.textContent,/Sensei/);
+    if(expected==='selected'){assert.equal(calls[0].args[2],'');assert.equal(calls[0].args[4],'');}
   }
 });

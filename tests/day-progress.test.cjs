@@ -86,10 +86,10 @@ test('one invalid student cannot prevent whole-day confirmation from reaching ge
 });
 
 test('whole-day warning appears immediately and scope selection has no missing-element references',()=>{
-  const ids=['dayWarning','choose','details','detailTitle','singleFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'];
+  const ids=['dayWarning','choose','details','detailTitle','singleFields','senseiFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'];
   const elements=Object.fromEntries(ids.map(id=>[id,{hidden:true,textContent:'',value:0}]));
   const choice={value:'day'};
-  const c=vm.createContext({scope:'selected',selectedName:'Oliver P',rows:[3,4],dayCs1Students:[],
+  const c=vm.createContext({scope:'selected',selectedName:'Oliver P',rows:[3,4],dayCs1Students:[],isUnity:false,dayNeedsSensei:true,
     document:{querySelector:()=>choice},el:id=>{assert.ok(elements[id],'Missing element '+id);return elements[id];}});
   const functions=source.slice(source.indexOf('  function showDayWarning(){'),source.indexOf('  function goBack(){'));
   vm.runInContext(functions,c);c.showDayWarning();assert.equal(elements.dayWarning.hidden,false);
