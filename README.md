@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v34**. Replace the script and reload the sheet to use it.
+This revision is **v35**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -67,16 +67,17 @@ field for the programs that use it, and CS1 students retain their own controls.
 Unity's dated progress text is filled automatically rather than from a Notes
 section in the popup.
 
-Unity's current project gets W and the text `Working MM/DD/YYYY` in its own note
-field (for example, `Working 10/24/2026`). Previous projects become C and get a
+Unity's current project gets W and a compact, date-first label in its own note
+field: `10/24/26 WIP`. Completed projects use `10/24/26 Done`. These text fields
+are capped at 12-point font, leaving the student's name size unchanged. Previous projects become C and get a
 dated Completed note when their text is blank or an automatic Working note.
 Existing dated completions retain their dates.
 
 On a forward belt change, the previous belt PDF is finalized before the new
 tracker is reported successful:
 
-- Unity: all project dropdowns become C and all project note fields say
-  `Completed MM/DD/YYYY`.
+- Unity: all project dropdowns become C and all project note fields use the
+  compact `MM/DD/YY Done` format. Older Completed dates are preserved when converted.
 - IMPACT: all work fields become C, review/level-up fields become L, and the
   existing Notes fields receive `Completed MM/DD/YYYY`.
 

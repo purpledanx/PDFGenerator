@@ -341,24 +341,24 @@ test('Unity current project saves visible Working date and preceding projects be
   const h=await harness(),{old}=await configureUnity(h);await h.run();
   const saved=await lib.PDFDocument.load(h.source.bytes),form=saved.getForm();
   assert.equal(form.getDropdown(old.meta.rows[0].status).getSelected()[0],'C');
-  assert.equal(form.getTextField(old.meta.rows[0].note).getText(),'Completed 10/24/2026');
+  assert.equal(form.getTextField(old.meta.rows[0].note).getText(),'10/24/26 Done');
   assert.equal(form.getDropdown(old.meta.rows[1].status).getSelected()[0],'W');
-  assert.equal(form.getTextField(old.meta.rows[1].note).getText(),'Working 10/24/2026');
+  assert.equal(form.getTextField(old.meta.rows[1].note).getText(),'10/24/26 WIP');
   assert.equal(form.getDropdown(old.meta.rows[2].status).getSelected()[0]||'','');
   const {PDFName,decodePDFRawStream}=lib;
   const widget=form.getTextField(old.meta.rows[1].note).acroField.getWidgets()[0];
   const stream=widget.dict.lookup(PDFName.of('AP')).lookup(PDFName.of('N'));
   const appearance=Buffer.from(decodePDFRawStream(stream).decode()).toString();
-  assert.match(appearance,new RegExp(Buffer.from('Working 10/24/2026').toString('hex'),'i'));
+  assert.match(appearance,new RegExp(Buffer.from('10/24/26 WIP').toString('hex'),'i'));
 });
 
 test('Unity promotion puts an all-completed dated previous card in the child folder and keeps the original intact',async()=>{
   const h=await harness(),{old}=await configureUnity(h,{previous:'UNITY_Silver'}),before=Buffer.from(h.source.bytes);
   await h.run();const rec=h.records[0];assert.ok(rec.archiveId);assert.deepEqual(h.source.bytes,before);
   const archived=(await lib.PDFDocument.load(h.files.get(rec.archiveId).bytes)).getForm();
-  for(const row of old.meta.rows){assert.equal(archived.getDropdown(row.status).getSelected()[0],'C');assert.equal(archived.getTextField(row.note).getText(),'Completed 10/24/2026');}
+  for(const row of old.meta.rows){assert.equal(archived.getDropdown(row.status).getSelected()[0],'C');assert.equal(archived.getTextField(row.note).getText(),'10/24/26 Done');}
   const current=(await lib.PDFDocument.load(h.files.get(rec.fileId).bytes)).getForm();
-  assert.equal(current.getTextField('undefined_2').getText(),'Working 10/24/2026');
+  assert.equal(current.getTextField('undefined_2').getText(),'10/24/26 WIP');
   h.c.undoCreatedTracker_(rec,h.files.get(rec.fileId),h.ss);
   assert.equal(h.files.get(rec.archiveId).trashed,true);assert.deepEqual(h.source.bytes,before);assert.equal(h.link,h.originalLink);
 });
@@ -448,7 +448,7 @@ test('single-student Unity generation accepts no Sensei and uses automatic text 
     confirmNewTrackerBelts_:()=>true,ensurePdfStatusColumn_(){},beginTrackerRun_:()=> 'run'});
   await h.c.generateFromPopup('10-10',3,'',0,'Do not add this note',null,'');
   const saved=(await lib.PDFDocument.load(h.source.bytes)).getForm();
-  assert.equal(saved.getTextField('undefined_2').getText(),'Working 10/24/2026');assert.equal(h.ready,true);
+  assert.equal(saved.getTextField('undefined_2').getText(),'10/24/26 WIP');assert.equal(h.ready,true);
 });
 
 test('Unity-only day generation and level-ups accept an empty Sensei',async()=>{
@@ -458,11 +458,43 @@ test('Unity-only day generation and level-ups accept an empty Sensei',async()=>{
   const result=await h.c.generateDayBatch('10-10',[3],'','run');
   assert.equal(result[0].ok,true,JSON.stringify(result));assert.equal(h.ready,true);
   const old=(await lib.PDFDocument.load(h.source.bytes)).getForm();
-  assert.equal(old.getTextField('undefined').getText(),'Completed 10/24/2026');
+  assert.equal(old.getTextField('undefined').getText(),'10/24/26 Done');
 });
 
 test('non-Unity programs still require Sensei before any tracker is changed',async()=>{
   const h=await harness();const before=Buffer.from(h.source.bytes);
   await assert.rejects(h.c.generateForRow_(h.ss.getSheetByName('10-10'),3,'W',0,{sensei:'',runId:'run'}),/Sensei/);
   assert.deepEqual(h.source.bytes,before);assert.equal(h.ready,false);
+});
+
+test('Unity uses compact date-first labels at 12 points while preserving historical dates and the name font',async()=>{
+  const h=await harness(),{old}=await configureUnity(h);
+  const sourcePdf=await lib.PDFDocument.load(h.source.bytes),form=sourcePdf.getForm();
+  form.getTextField('Ninjas Name').setFontSize(24);
+  form.getDropdown(old.meta.rows[0].status).select('C');
+  form.getTextField(old.meta.rows[0].note).setText('Completed 09/12/2025');
+  form.getTextField(old.meta.rows[0].note).setFontSize(28);
+  const current=form.getTextField(old.meta.rows[1].note);current.setText('Working 10/10/2026');current.setFontSize(28);
+  const widget=current.acroField.getWidgets()[0];widget.setRectangle({...widget.getRectangle(),width:130});
+  form.getDropdown(old.meta.rows[3].status).select('W');
+  form.getTextField(old.meta.rows[3].note).setText('10/11/26 WIP');
+  h.source.bytes=Buffer.from(await sourcePdf.save());await h.run();
+  const saved=await lib.PDFDocument.load(h.source.bytes),result=saved.getForm();
+  assert.equal(result.getTextField(old.meta.rows[0].note).getText(),'09/12/25 Done');
+  assert.equal(result.getTextField(old.meta.rows[1].note).getText(),'10/24/26 WIP');
+  for(const index of [0,1])assert.match(result.getTextField(old.meta.rows[index].note).acroField.getDefaultAppearance(),/12 Tf/);
+  assert.match(result.getTextField('Ninjas Name').acroField.getDefaultAppearance(),/24 Tf/);
+  assert.equal(result.getTextField(old.meta.rows[3].note).getText()||'','');
+  const font=await saved.embedFont(lib.StandardFonts.Helvetica);
+  assert.ok(font.widthOfTextAtSize('10/24/26 WIP',12)<126);
+});
+
+test('completed Unity cards convert old Completed text to short dated labels and cap the font',async()=>{
+  const h=await harness(),{old}=await configureUnity(h,{previous:'UNITY_Silver'});
+  const pdf=await lib.PDFDocument.load(h.source.bytes),field=pdf.getForm().getTextField(old.meta.rows[0].note);
+  field.setText('Completed 09/12/2025');field.setFontSize(28);h.source.bytes=Buffer.from(await pdf.save());
+  await h.run();const result=(await lib.PDFDocument.load(h.files.get(h.records[0].archiveId).bytes)).getForm();
+  assert.equal(result.getTextField(old.meta.rows[0].note).getText(),'09/12/25 Done');
+  assert.match(result.getTextField(old.meta.rows[0].note).acroField.getDefaultAppearance(),/12 Tf/);
+  assert.equal(result.getTextField(old.meta.rows[1].note).getText(),'10/24/26 Done');
 });
