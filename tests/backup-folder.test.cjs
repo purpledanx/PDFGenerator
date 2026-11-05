@@ -35,9 +35,12 @@ test('reuses one existing folder after properties are missing, and creates once 
   const empty=harness();for(let i=0;i<4;i++)assert.equal(empty.c.getUndoFolder_().getId(),'created1');assert.equal(empty.created,1);
 });
 
-test('a saved inaccessible folder causes an error instead of silently creating duplicate folders',()=>{
+test('a saved inaccessible folder recovers an existing accessible folder and remembers it',()=>{
   const h=harness();h.values.set('TRACKER_PDF_UNDO_FOLDER','inaccessible');
-  assert.throws(()=>h.c.getUndoFolder_(),/No replacement folder was created/);assert.equal(h.created,0);
+  h.folder('recovered');
+  assert.equal(h.c.getUndoFolder_().getId(),'recovered');assert.equal(h.created,0);
+  assert.equal(h.values.get('TRACKER_PDF_UNDO_FOLDER'),'recovered');
+  assert.equal(h.c.getUndoFolder_().getId(),'recovered');assert.equal(h.created,0);
 });
 
 test('a pinned folder ID is reused across projects regardless of the old saved folder property',()=>{
@@ -81,4 +84,31 @@ test('cleanup excludes tracker/template IDs even if they were incorrectly placed
   h.values.set('TRACKER_UNDO_old_0',JSON.stringify({fileId:student.id}));
   vm.runInContext(`CONFIG.TEMPLATES.IMPACT_Yellow='${template.id}'`,h.c);
   h.c.pruneTrackerUndoPdfCount_();assert.equal(student.trashed,false);assert.equal(template.trashed,false);
+});
+
+test('missing saved folder with no accessible alternative creates only one reusable replacement',()=>{
+  const h=harness();h.values.set('TRACKER_PDF_UNDO_FOLDER','deleted');
+  for(let i=0;i<5;i++)assert.equal(h.c.getUndoFolder_().getId(),'created1');
+  assert.equal(h.created,1);assert.ok(h.warnings.some(message=>message.includes('replacement')));
+});
+
+test('bad configured folder ID falls back to the valid saved folder, including PDF-count cleanup',()=>{
+  const h=harness(),folder=h.folder('saved');h.values.set('TRACKER_PDF_UNDO_FOLDER','saved');
+  vm.runInContext("CONFIG.UNDO_BACKUP_FOLDER_ID='unavailable';CONFIG.UNDO_BACKUP_MAX_PDFS=1",h.c);
+  const first=h.file(folder,1),second=h.file(folder,2);
+  assert.equal(h.c.getUndoFolder_().getId(),'saved');assert.equal(h.created,0);
+  assert.equal(h.c.pruneTrackerUndoPdfCount_().removed,1);
+  assert.equal(first.trashed,true);assert.equal(second.trashed,false);
+});
+
+test('a trashed saved folder is replaced by another existing folder, without making a duplicate',()=>{
+  const h=harness(),old=h.folder('trashed');old.trashed=true;h.folder('accessible');
+  h.values.set('TRACKER_PDF_UNDO_FOLDER','trashed');
+  assert.equal(h.c.getUndoFolder_().getId(),'accessible');assert.equal(h.created,0);
+});
+
+test('a Drive listing failure does not create new folders when existing folders cannot be checked',()=>{
+  const h=harness();h.values.set('TRACKER_PDF_UNDO_FOLDER','inaccessible');
+  h.c.DriveApp.getFoldersByName=()=>{throw Error('Drive unavailable');};
+  assert.throws(()=>h.c.getUndoFolder_(),/Drive unavailable/);assert.equal(h.created,0);
 });

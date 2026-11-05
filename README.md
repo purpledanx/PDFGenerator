@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v37**. Replace the script and reload the sheet to use it.
+This revision is **v38**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -97,8 +97,10 @@ The extra backup follows the same five-action retention policy below.
 
 All Undo backups use one reusable **Tracker PDF Undo Backups** folder. The script
 remembers its ID and searches for an existing folder with that name before
-creating one if the saved ID is missing. An inaccessible saved folder produces
-an error instead of silently creating another folder.
+creating one if the saved ID is missing or inaccessible. A stale ID first falls
+back to a valid saved/configured folder, then searches for an existing named
+folder. If none is accessible, one replacement is created and its ID is saved
+for reuse. A Drive search failure stops recovery rather than creating duplicates.
 
 After installing, run **Tracker PDFs → Consolidate / Clean Undo Backups** once
 to merge existing duplicate backup folders. Recognized backup PDFs move into the
