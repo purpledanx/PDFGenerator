@@ -45,7 +45,7 @@ test('completion choices, dates and notes are collected independently for every 
   fields.dayCs14Date.value='';assert.throws(()=>c.collectDayCs1Selections(),/Easton G/);
 });
 
-async function server({completeIndex=0,changed=false,alreadyComplete=false,legacyText=false}={}){
+async function server({completeIndex=0,changed=false,alreadyComplete=false,legacyText=false,startedChosen=false,repeat=false}={}){
   const c=vm.createContext({Uint8Array,Int8Array});vm.runInContext(source,c);const meta=vm.runInContext('TRACKER_FIELDS.CS_1',c);
   const pdf=await lib.PDFDocument.create(),page=pdf.addPage(),form=pdf.getForm();
   form.createTextField("Student's Name").setText('Easton G');
@@ -58,8 +58,9 @@ async function server({completeIndex=0,changed=false,alreadyComplete=false,legac
     form.getCheckBox(meta.rows[2].check).check();form.getTextField(meta.rows[2].date).setText('10/10/26');form.getTextField(meta.rows[2].by).setText('ji');
     form.getTextField(meta.rows[1].date).setText('10/01/26');form.getTextField(meta.rows[1].by).setText('Old Sensei');
   }
+  if(startedChosen){form.getTextField(meta.rows[0].date).setText('09/14/26');form.getTextField(meta.rows[0].by).setText('Working!');}
   const bytes=await pdf.save();let saved=null,ready=false;
-  const file={getId:()=> 'student',getName:()=> 'Easton G CS1 Tracker.pdf',getBlob:()=>({getBytes:()=>Array.from(bytes)})};
+  const file={getId:()=> 'student',getName:()=> 'Easton G CS1 Tracker.pdf',getBlob:()=>({getBytes:()=>Array.from(saved||bytes)})};
   const sheet={getName:()=> '10-29',getLastRow:()=>4,getParent:()=>({}),getRange:(row,col,nr,nc)=>{
     const values=['Easton G','','','CS_1',tasks[1]];
     if(nr===1&&nc===5)return {getDisplayValues:()=>[values]};
@@ -74,7 +75,8 @@ async function server({completeIndex=0,changed=false,alreadyComplete=false,legac
     persistTrackerPdf_:(location,blob)=>{saved=Uint8Array.from(blob.getBytes());return {url:'tracker-url'};}});
   const choices={4:{student:changed?'Different Student':'Easton G',project:tasks[1],cs1CompleteIndex:completeIndex,
     cs1CompletionDate:completeIndex===null?'':'2026-10-20',notes:'Session note'}};
-  const results=await c.generateDayBatch('10-29',[4],'','run',choices);
+  let results=await c.generateDayBatch('10-29',[4],'','run',choices);
+  if(repeat && results[0].ok){c.getSessionDate_=()=>({short:'11/04/26'});results=await c.generateDayBatch('10-29',[4],'','run',choices);}
   return {results,pdf:saved?await lib.PDFDocument.load(saved):null,meta,ready};
 }
 
@@ -163,5 +165,20 @@ test('CS1 replaces legacy Sensei names with Nice or Working while preserving che
   assert.equal(form.getTextField(h.meta.rows[2].date).getText(),'10/10/26');
   assert.equal(form.getCheckBox(h.meta.rows[1].check).isChecked(),false);
   assert.equal(form.getTextField(h.meta.rows[1].by).getText(),'Working!');
-  assert.equal(form.getTextField(h.meta.rows[1].date).getText(),'10/29/26');
+  assert.equal(form.getTextField(h.meta.rows[1].date).getText(),'10/01/26');
+});
+
+
+test('CS1 repeating a working-project update preserves the first start date',async()=>{
+  const h=await server({completeIndex:null,repeat:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
+  const form=h.pdf.getForm();assert.equal(form.getTextField(h.meta.rows[1].date).getText(),'10/29/26');
+  assert.equal(form.getTextField(h.meta.rows[1].by).getText(),'Working!');
+  assert.equal(form.getCheckBox(h.meta.rows[1].check).isChecked(),false);
+});
+
+test('marking a started CS1 project complete preserves its original start date',async()=>{
+  const h=await server({startedChosen:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
+  const form=h.pdf.getForm();assert.equal(form.getTextField(h.meta.rows[0].date).getText(),'09/14/26');
+  assert.equal(form.getTextField(h.meta.rows[0].by).getText(),'Nice!');
+  assert.equal(form.getCheckBox(h.meta.rows[0].check).isChecked(),true);
 });

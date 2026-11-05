@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v39**. Replace the script and reload the sheet to use it.
+This revision is **v40**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -131,9 +131,11 @@ The CS1 explanatory paragraphs and free-text Notes input are removed. Mixed
 whole-day runs ask for a Sensei only when another program requires one.
 
 CS1's By field uses fixed labels: checked projects say `Nice!`, and the current
-unchecked project says `Working!` with the journal date. A new selected completion
-gets a checkmark, `Nice!`, and the date chosen in the popup. Existing checked
-projects retain their completion dates; legacy Sensei names in By are replaced
+unchecked project says `Working!`. Its original start date is preserved on
+every later update, including when marking it complete. A blank working-project
+date gets the journal date. A selected completion gets a checkmark and `Nice!`;
+the popup date is used only if that project has no date yet. Existing checked
+projects also retain their dates; legacy Sensei names in By are replaced
 with `Nice!`. Blank future rows remain blank. If a student's row or current
 project changes after the form was shown, the update asks you to reopen it.
 
