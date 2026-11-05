@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v41**. Replace the script and reload the sheet to use it.
+This revision is **v42**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -71,7 +71,12 @@ Unity's current project gets W and a compact, date-first label in its own note
 field: `10/24/26 WIP`. Completed projects use `10/24/26 Done`. These text fields
 are capped at 12-point font, leaving the student's name size unchanged. Previous projects become C and get a
 dated Completed note when their text is blank or an automatic Working note.
-Existing dated completions retain their dates.
+Existing dated project text is preserved during routine updates, including custom
+comments such as `10/23/26 Making very impressive progress`. Automatic WIP labels
+keep their original date, and new dates are added only to undated project fields.
+Existing completion dates are preserved as well. Completing a previous Unity belt
+uses dates already in each project's text, including older custom dated comments,
+instead of replacing them with the current journal date.
 
 On a forward belt change, the previous belt PDF is finalized before the new
 tracker is reported successful:

@@ -481,10 +481,11 @@ test('Unity uses compact date-first labels at 12 points while preserving histori
   h.source.bytes=Buffer.from(await sourcePdf.save());await h.run();
   const saved=await lib.PDFDocument.load(h.source.bytes),result=saved.getForm();
   assert.equal(result.getTextField(old.meta.rows[0].note).getText(),'09/12/25 Done');
-  assert.equal(result.getTextField(old.meta.rows[1].note).getText(),'10/24/26 WIP');
+  assert.equal(result.getTextField(old.meta.rows[1].note).getText(),'10/10/26 WIP');
   for(const index of [0,1])assert.match(result.getTextField(old.meta.rows[index].note).acroField.getDefaultAppearance(),/12 Tf/);
   assert.match(result.getTextField('Ninjas Name').acroField.getDefaultAppearance(),/24 Tf/);
-  assert.equal(result.getTextField(old.meta.rows[3].note).getText()||'','');
+  assert.equal(result.getTextField(old.meta.rows[3].note).getText(),'10/11/26 WIP');
+  assert.equal((result.getDropdown(old.meta.rows[3].status).getSelected()[0]||'').trim(),'');
   const font=await saved.embedFont(lib.StandardFonts.Helvetica);
   assert.ok(font.widthOfTextAtSize('10/24/26 WIP',12)<126);
 });
@@ -497,4 +498,42 @@ test('completed Unity cards convert old Completed text to short dated labels and
   assert.equal(result.getTextField(old.meta.rows[0].note).getText(),'09/12/25 Done');
   assert.match(result.getTextField(old.meta.rows[0].note).acroField.getDefaultAppearance(),/12 Tf/);
   assert.equal(result.getTextField(old.meta.rows[1].note).getText(),'10/24/26 Done');
+});
+
+
+test('Unity preserves Timothy-style dated comments during repeated updates instead of inserting the journal date',async()=>{
+  const h=await harness(),{old}=await configureUnity(h);
+  const original=await lib.PDFDocument.load(h.source.bytes),form=original.getForm();
+  form.getDropdown(old.meta.rows[0].status).select('C');
+  form.getTextField(old.meta.rows[0].note).setText('7/21/2026 Complete!');
+  form.getDropdown(old.meta.rows[1].status).select('W');
+  form.getTextField(old.meta.rows[1].note).setText('10/23/26 Making very impressive progress');
+  h.source.bytes=Buffer.from(await original.save());
+  for(const short of ['11/04/26','11/05/26']){
+    h.c.getSessionDate_=()=>({short});await h.run();
+    const saved=(await lib.PDFDocument.load(h.source.bytes)).getForm();
+    assert.equal(saved.getTextField(old.meta.rows[0].note).getText(),'7/21/2026 Complete!');
+    assert.equal(saved.getTextField(old.meta.rows[1].note).getText(),'10/23/26 Making very impressive progress');
+    assert.equal(saved.getDropdown(old.meta.rows[1].status).getSelected()[0],'W');
+  }
+});
+
+test('Unity automatic WIP labels retain their original date on repeated updates',async()=>{
+  const h=await harness(),{old}=await configureUnity(h);await h.run();
+  h.c.getSessionDate_=()=>({iso:'2026-11-04',short:'11/04/26'});await h.run();
+  const saved=(await lib.PDFDocument.load(h.source.bytes)).getForm();
+  assert.equal(saved.getTextField(old.meta.rows[1].note).getText(),'10/24/26 WIP');
+});
+
+test('Unity level-up completion preserves dates from working and custom dated notes',async()=>{
+  const h=await harness(),{old}=await configureUnity(h,{previous:'UNITY_Silver'});
+  const pdf=await lib.PDFDocument.load(h.source.bytes),form=pdf.getForm();
+  form.getTextField(old.meta.rows[0].note).setText('7/21/2026 Complete!');
+  form.getTextField(old.meta.rows[1].note).setText('10/23/26 Making very impressive progress');
+  form.getTextField(old.meta.rows[2].note).setText('Working 10/10/2026');
+  h.source.bytes=Buffer.from(await pdf.save());await h.run();
+  const archived=(await lib.PDFDocument.load(h.files.get(h.records[0].archiveId).bytes)).getForm();
+  assert.equal(archived.getTextField(old.meta.rows[0].note).getText(),'07/21/26 Done');
+  assert.equal(archived.getTextField(old.meta.rows[1].note).getText(),'10/23/26 Done');
+  assert.equal(archived.getTextField(old.meta.rows[2].note).getText(),'10/10/26 Done');
 });
