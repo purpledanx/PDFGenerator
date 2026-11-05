@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v35**. Replace the script and reload the sheet to use it.
+This revision is **v36**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -95,20 +95,32 @@ The extra backup follows the same five-action retention policy below.
 
 ## Undo backup retention
 
-Undo backup PDFs are kept for the five most recent successful generation actions
-per journal. A whole-day run counts as one action, even when it updates many
-students. On action six, backups from the oldest action move to Drive Trash.
-Empty or fully failed runs do not advance retention. Undo Last PDF Update still
-restores only the latest run; keeping backup files does not add a history picker.
+All Undo backups use one reusable **Tracker PDF Undo Backups** folder. The script
+remembers its ID and searches for an existing folder with that name before
+creating one if the saved ID is missing. An inaccessible saved folder produces
+an error instead of silently creating another folder.
 
-Cleanup removes only recorded backup PDFs in the Undo backup folder. Student
-trackers, child folders and archived belt PDFs are preserved. A failed update
-with a successful rollback discards its unused backup immediately. Cleanup
-permission failures are logged and retried on later generation actions.
+After installing, run **Tracker PDFs → Consolidate / Clean Undo Backups** once
+to merge existing duplicate backup folders. Recognized backup PDFs move into the
+chosen folder without changing their IDs; empty duplicate folders go to Trash.
+Folders containing other files are left intact.
 
-The last available Undo run is registered when upgrading. Older untracked
-backups from previous script versions are left alone because their action ages
-cannot be established reliably.
+`CONFIG.UNDO_BACKUP_MAX_PDFS` is **50**. Successful generation automatically moves
+the oldest excess backup PDFs to Trash. Current Undo backups are protected,
+including previous-belt backups. A large whole-day action can therefore retain
+more than 50 files until a later action replaces it. Cleanup never deletes
+student trackers, archived belt cards, templates or unrelated PDFs.
+
+The five-successful-action retention rule also remains: a whole-day run counts
+as one action, and empty/fully failed runs do not age backups. Either rule can
+expire older backups. Undo Last PDF Update still restores only the latest run.
+Permission failures are logged and cleanup is retried on later generation.
+
+To use a specific folder across separate journal/script projects, put the same
+Drive folder ID in `CONFIG.UNDO_BACKUP_FOLDER_ID`. Leave it blank to discover and
+remember the existing named folder automatically. Older generated backup PDFs
+with timestamped BACKUP filenames are included during consolidation/count cleanup,
+even when their old action metadata is unavailable.
 
 ## Whole-day progress
 

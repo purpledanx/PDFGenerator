@@ -4,13 +4,13 @@ const fs=require('node:fs'),vm=require('node:vm');
 const source=fs.readFileSync(require.resolve('../PDFGenerator.gs'),'utf8');
 function harness(){
   const store=new Map([['TRACKER_PDF_UNDO_FOLDER','undo-folder']]),files=new Map(),warnings=[];let seq=0,backupSeq=0;
-  const props={getProperty:key=>store.get(key)||null,setProperty:(key,value)=>store.set(key,value),deleteProperty:key=>store.delete(key)};
+  const props={getProperty:key=>store.get(key)||null,setProperty:(key,value)=>store.set(key,value),deleteProperty:key=>store.delete(key),getProperties:()=>Object.fromEntries(store)};
   const c=vm.createContext({console:{warn:text=>warnings.push(text)},
     SpreadsheetApp:{getActiveSpreadsheet:()=>({getId:()=> 'journal'})},PropertiesService:{getScriptProperties:()=>props},
-    Utilities:{getUuid:()=> 'run'+(++seq)},DriveApp:{getFileById:id=>{if(!files.has(id))throw Error('Missing file');return files.get(id);}}});
+    MimeType:{PDF:'application/pdf'},Utilities:{getUuid:()=> 'run'+(++seq)},DriveApp:{getFolderById:()=>({getFiles:()=>{const list=[...files.values()].filter(f=>!f.trashed),it=list[Symbol.iterator]();let next=it.next();return {hasNext:()=>!next.done,next:()=>{const value=next.value;next=it.next();return value;}};}}),getFileById:id=>{if(!files.has(id))throw Error('Missing file');return files.get(id);}}});
   vm.runInContext(source,c);
   function backup({parent='undo-folder',name='BACKUP original.pdf',denied=false}={}){
-    const id='backup'+(++backupSeq),f={id,trashed:false,denied,getName:()=>name,
+    const id='backup'+(++backupSeq),f={id,trashed:false,denied,getId:()=>id,getName:()=>name,getMimeType:()=> 'application/pdf',getDateCreated:()=>new Date(Number(id.slice(6))),
       getParents:()=>{let used=false;return {hasNext:()=>!used,next:()=>{used=true;return {getId:()=>parent};}};},
       isTrashed:()=>f.trashed,setTrashed:value=>{if(f.denied)throw Error('Access denied');f.trashed=value;}};
     files.set(id,f);return f;
@@ -92,4 +92,16 @@ test('previous-belt completion backups expire with the same action as the curren
     for(let i=0;i<4;i++)h.action();assert.equal(previous.trashed,false);
     h.action();assert.equal(previous.trashed,true);if(current)assert.equal(current.trashed,true);
   }
+});
+
+
+test('successful generation automatically enforces the PDF count cap as well as five-action retention',()=>{
+  const h=harness();vm.runInContext('CONFIG.UNDO_BACKUP_MAX_PDFS=2',h.c);
+  const backups=[];
+  for(let i=0;i<5;i++){
+    const id=h.c.beginTrackerRun_('10-10'),b=h.backup({name:'BACKUP '+(1700000000000+i)+' Student.pdf'});backups.push(b);
+    h.c.addTrackerUndoRecord_(id,{tab:'10-10',fileId:'student'+i,backupId:b.id});
+    assert.ok(backups.filter(f=>!f.trashed).length<=2);
+  }
+  assert.ok(backups.slice(0,3).every(f=>f.trashed));assert.ok(backups.slice(3).every(f=>!f.trashed));
 });
