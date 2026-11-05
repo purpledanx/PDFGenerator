@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v36**. Replace the script and reload the sheet to use it.
+This revision is **v37**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -124,16 +124,17 @@ even when their old action metadata is unavailable.
 
 ## Whole-day progress
 
-When Entire day is selected, each CS1 student has a separate completion form
-before the batch starts, even if the initially selected student is in another
-program. Choose a completed project (or None), completion date, and notes for
-each CS1 student. Notes default to `Still working.` with None selected, and
-switch to `Nice!` when a completion project is selected. Custom instructor notes
-are preserved when changing the selection. The same defaults apply to the
-single-student form. The common Sensei field applies to all students. The current
-project from column E remains in progress, and previously recorded completions
-keep their date and Sensei. If a student's row or project changes after the form
-was displayed, that student's update stops and asks you to reopen the popup.
+CS1 updates do not require a Sensei name. In both single-student and whole-day
+forms, choose a project to mark completed (or None) and its completion date.
+The CS1 explanatory paragraphs and free-text Notes input are removed. Mixed
+whole-day runs ask for a Sensei only when another program requires one.
+
+CS1's By field uses fixed labels: checked projects say `Nice!`, and the current
+unchecked project says `Working!` with the journal date. A new selected completion
+gets a checkmark, `Nice!`, and the date chosen in the popup. Existing checked
+projects retain their completion dates; legacy Sensei names in By are replaced
+with `Nice!`. Blank future rows remain blank. If a student's row or current
+project changes after the form was shown, the update asks you to reopen it.
 
 The whole-day dialog stays open until you close it. It shows the completed
 student count, current student's name and processing stage, a progress bar, and
