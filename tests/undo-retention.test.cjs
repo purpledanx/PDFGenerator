@@ -7,7 +7,7 @@ function harness(){
   const props={getProperty:key=>store.get(key)||null,setProperty:(key,value)=>store.set(key,value),deleteProperty:key=>store.delete(key),getProperties:()=>Object.fromEntries(store)};
   const c=vm.createContext({console:{warn:text=>warnings.push(text)},
     SpreadsheetApp:{getActiveSpreadsheet:()=>({getId:()=> 'journal'})},PropertiesService:{getScriptProperties:()=>props},
-    MimeType:{PDF:'application/pdf'},Utilities:{getUuid:()=> 'run'+(++seq)},DriveApp:{getFolderById:()=>({getFiles:()=>{const list=[...files.values()].filter(f=>!f.trashed),it=list[Symbol.iterator]();let next=it.next();return {hasNext:()=>!next.done,next:()=>{const value=next.value;next=it.next();return value;}};}}),getFileById:id=>{if(!files.has(id))throw Error('Missing file');return files.get(id);}}});
+    MimeType:{PDF:'application/pdf'},Utilities:{getUuid:()=> 'run'+(++seq)},DriveApp:{getFoldersByName:()=>{let used=false;return {hasNext:()=>!used,next:()=>{used=true;return c.DriveApp.getFolderById();}};},getFolderById:()=>({isTrashed:()=>false,getId:()=> 'undo-folder',getDateCreated:()=>new Date(0),getFiles:()=>{const list=[...files.values()].filter(f=>!f.trashed),it=list[Symbol.iterator]();let next=it.next();return {hasNext:()=>!next.done,next:()=>{const value=next.value;next=it.next();return value;}};}}),getFileById:id=>{if(!files.has(id))throw Error('Missing file');return files.get(id);}}});
   vm.runInContext(source,c);
   function backup({parent='undo-folder',name='BACKUP original.pdf',denied=false}={}){
     const id='backup'+(++backupSeq),f={id,trashed:false,denied,getId:()=>id,getName:()=>name,getMimeType:()=> 'application/pdf',getDateCreated:()=>new Date(Number(id.slice(6))),

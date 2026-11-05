@@ -4,7 +4,7 @@ const iterator=list=>{let i=0;return {hasNext:()=>i<list.length,next:()=>list[i+
 function harness(){
   const values=new Map(),folders=new Map(),files=new Map(),alerts=[],warnings=[];let seq=0,created=0;
   const props={getProperty:key=>values.get(key)||null,setProperty:(key,value)=>values.set(key,value),getProperties:()=>Object.fromEntries(values)};
-  function folder(id,name='Tracker PDF Undo Backups',date=0){
+  function folder(id,name='PDF Undo Files',date=0){
     const item={id,name,trashed:false,getId:()=>id,getName:()=>name,getDateCreated:()=>new Date(date),isTrashed:()=>item.trashed,
       getUrl:()=> 'https://drive.google.com/drive/folders/'+id,setTrashed:val=>item.trashed=val,
       getFiles:()=>iterator([...files.values()].filter(f=>f.folder===item&&!f.trashed)),getFolders:()=>iterator([])};
@@ -29,7 +29,7 @@ function harness(){
 }
 
 test('reuses one existing folder after properties are missing, and creates once if no folder exists',()=>{
-  const h=harness(),original=h.folder('oldest','Tracker PDF Undo Backups',1);h.folder('newer','Tracker PDF Undo Backups',2);
+  const h=harness(),original=h.folder('oldest','PDF Undo Files',1);h.folder('newer','PDF Undo Files',2);
   assert.equal(h.c.getUndoFolder_().getId(),original.getId());assert.equal(h.created,0);
   h.values.clear();assert.equal(h.c.getUndoFolder_().getId(),original.getId());assert.equal(h.created,0);
   const empty=harness();for(let i=0;i<4;i++)assert.equal(empty.c.getUndoFolder_().getId(),'created1');assert.equal(empty.created,1);
@@ -43,10 +43,11 @@ test('a saved inaccessible folder recovers an existing accessible folder and rem
   assert.equal(h.c.getUndoFolder_().getId(),'recovered');assert.equal(h.created,0);
 });
 
-test('a pinned folder ID is reused across projects regardless of the old saved folder property',()=>{
-  const h=harness();h.folder('pinned','Central Undo');h.values.set('TRACKER_PDF_UNDO_FOLDER','other');
+test('folder lookup uses the exact PDF Undo Files name and ignores both configured and saved IDs',()=>{
+  const h=harness();h.folder('named');h.folder('pinned','Central Undo');h.values.set('TRACKER_PDF_UNDO_FOLDER','pinned');
   vm.runInContext("CONFIG.UNDO_BACKUP_FOLDER_ID='pinned'",h.c);
-  assert.equal(h.c.getUndoFolder_().getId(),'pinned');assert.equal(h.created,0);
+  h.c.DriveApp.getFolderById=()=>{throw Error('Folder lookup must use its name');};
+  assert.equal(h.c.getUndoFolder_().getId(),'named');assert.equal(h.created,0);
 });
 
 test('PDF-count cleanup keeps 50 backups, removes oldest first, and protects current Undo backups',()=>{
@@ -68,7 +69,7 @@ test('oversized current day action is kept intact even when it exceeds the 50-PD
 });
 
 test('manual consolidation moves old backups into one folder, removes empty duplicates, and leaves student/unknown PDFs untouched',()=>{
-  const h=harness(),primary=h.folder('primary'),duplicate=h.folder('duplicate'),mixed=h.folder('mixed');
+  const h=harness(),primary=h.folder('primary','PDF Undo Files',-1),duplicate=h.folder('duplicate'),mixed=h.folder('mixed');
   h.values.set('TRACKER_PDF_UNDO_FOLDER','primary');
   const old=h.file(duplicate,1),other=h.file(mixed,2),student=h.file(mixed,3,'Student Yellow Belt Tracker.pdf');
   const unknown=h.file(primary,4,'Personal document.pdf');
@@ -89,7 +90,7 @@ test('cleanup excludes tracker/template IDs even if they were incorrectly placed
 test('missing saved folder with no accessible alternative creates only one reusable replacement',()=>{
   const h=harness();h.values.set('TRACKER_PDF_UNDO_FOLDER','deleted');
   for(let i=0;i<5;i++)assert.equal(h.c.getUndoFolder_().getId(),'created1');
-  assert.equal(h.created,1);assert.ok(h.warnings.some(message=>message.includes('replacement')));
+  assert.equal(h.created,1);assert.equal(h.folders.get('created1').name,'PDF Undo Files');
 });
 
 test('bad configured folder ID falls back to the valid saved folder, including PDF-count cleanup',()=>{
@@ -111,4 +112,11 @@ test('a Drive listing failure does not create new folders when existing folders 
   const h=harness();h.values.set('TRACKER_PDF_UNDO_FOLDER','inaccessible');
   h.c.DriveApp.getFoldersByName=()=>{throw Error('Drive unavailable');};
   assert.throws(()=>h.c.getUndoFolder_(),/Drive unavailable/);assert.equal(h.created,0);
+});
+
+
+test('consolidation moves backups from the legacy folder name into PDF Undo Files',()=>{
+  const h=harness(),legacy=h.folder('legacy','Tracker PDF Undo Backups'),backup=h.file(legacy,1);
+  const result=h.c.consolidateTrackerUndoBackups();
+  assert.equal(result.moved,1);assert.equal(backup.folder.name,'PDF Undo Files');assert.equal(legacy.trashed,true);
 });

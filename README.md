@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v38**. Replace the script and reload the sheet to use it.
+This revision is **v39**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -95,12 +95,11 @@ The extra backup follows the same five-action retention policy below.
 
 ## Undo backup retention
 
-All Undo backups use one reusable **Tracker PDF Undo Backups** folder. The script
-remembers its ID and searches for an existing folder with that name before
-creating one if the saved ID is missing or inaccessible. A stale ID first falls
-back to a valid saved/configured folder, then searches for an existing named
-folder. If none is accessible, one replacement is created and its ID is saved
-for reuse. A Drive search failure stops recovery rather than creating duplicates.
+All Undo backups use a folder named exactly **PDF Undo Files**. The generator
+searches Drive by that name on every lookup; no folder ID is required or used
+for locating it. It reuses the oldest accessible matching folder if duplicates
+exist and creates one only when none is found. A failed Drive search stops the
+operation instead of creating a duplicate.
 
 After installing, run **Tracker PDFs → Consolidate / Clean Undo Backups** once
 to merge existing duplicate backup folders. Recognized backup PDFs move into the
@@ -118,11 +117,11 @@ as one action, and empty/fully failed runs do not age backups. Either rule can
 expire older backups. Undo Last PDF Update still restores only the latest run.
 Permission failures are logged and cleanup is retried on later generation.
 
-To use a specific folder across separate journal/script projects, put the same
-Drive folder ID in `CONFIG.UNDO_BACKUP_FOLDER_ID`. Leave it blank to discover and
-remember the existing named folder automatically. Older generated backup PDFs
-with timestamped BACKUP filenames are included during consolidation/count cleanup,
-even when their old action metadata is unavailable.
+Create or rename the intended folder to `PDF Undo Files` so separate journal
+scripts can discover it by name. The consolidation menu also moves recognized
+backups from the old `Tracker PDF Undo Backups` folders into `PDF Undo Files`,
+including older timestamped backups without action metadata. Empty legacy
+folders are moved to Trash; unrelated files remain untouched.
 
 ## Whole-day progress
 
