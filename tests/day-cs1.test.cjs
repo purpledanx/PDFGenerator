@@ -45,7 +45,7 @@ test('completion choices are collected per student without date or notes inputs'
   delete fields.dayCs14Date;delete fields.dayCs15Date;assert.doesNotThrow(()=>c.collectDayCs1Selections());
 });
 
-async function server({completeIndex=0,changed=false,alreadyComplete=false,legacyText=false,startedChosen=false,repeat=false}={}){
+async function server({completeIndex=0,changed=false,alreadyComplete=false,legacyText=false,startedChosen=false,repeat=false,customDescription=false}={}){
   const c=vm.createContext({Uint8Array,Int8Array});vm.runInContext(source,c);const meta=vm.runInContext('TRACKER_FIELDS.CS_1',c);
   const pdf=await lib.PDFDocument.create(),page=pdf.addPage(),form=pdf.getForm();
   form.createTextField("Student's Name").setText('Easton G');
@@ -59,6 +59,7 @@ async function server({completeIndex=0,changed=false,alreadyComplete=false,legac
     form.getTextField(meta.rows[1].date).setText('10/01/26');form.getTextField(meta.rows[1].by).setText('Old Sensei');
   }
   if(startedChosen){form.getTextField(meta.rows[0].date).setText('09/14/26');form.getTextField(meta.rows[0].by).setText('Working!');}
+  if(customDescription){form.getTextField(meta.rows[1].by).setText('Making very impressive progress');form.getTextField(meta.rows[0].by).setText('Great teamwork');}
   const bytes=await pdf.save();let saved=null,ready=false;
   const file={getId:()=> 'student',getName:()=> 'Easton G CS1 Tracker.pdf',getBlob:()=>({getBytes:()=>Array.from(saved||bytes)})};
   const sheet={getName:()=> '10-29',getLastRow:()=>4,getParent:()=>({}),getRange:(row,col,nr,nc)=>{
@@ -89,12 +90,12 @@ test('whole-day choices mark only the chosen CS1 project and preserve the curren
   assert.equal(f.getCheckBox(h.meta.rows[2].check).isChecked(),false);
 });
 
-test('None leaves CS1 completions unchanged and existing completions preserve their historical date with Nice! in By',async()=>{
+test('None leaves CS1 completions unchanged and existing completions preserve their historical date and existing By text',async()=>{
   const none=await server({completeIndex:null});assert.equal(none.results[0].ok,true,JSON.stringify(none.results));
   assert.equal(none.pdf.getForm().getCheckBox(none.meta.rows[0].check).isChecked(),false);
   const done=await server({alreadyComplete:true});assert.equal(done.results[0].ok,true);
   assert.equal(done.pdf.getForm().getTextField(done.meta.rows[0].date).getText(),'09/01/26');
-  assert.equal(done.pdf.getForm().getTextField(done.meta.rows[0].by).getText(),'Nice!');
+  assert.equal(done.pdf.getForm().getTextField(done.meta.rows[0].by).getText(),'Previous Sensei');
 });
 
 test('changed students and attempts to complete the current project fail before saving a PDF',async()=>{
@@ -157,14 +158,14 @@ test('dialog submits Unity updates with an empty Sensei and no Notes input, whil
 });
 
 
-test('CS1 replaces legacy Sensei names with Nice or Working while preserving checked dates',async()=>{
+test('CS1 preserves existing By text and dates instead of replacing them with automatic labels',async()=>{
   const h=await server({legacyText:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
   const form=h.pdf.getForm();
   assert.equal(form.getCheckBox(h.meta.rows[2].check).isChecked(),true);
-  assert.equal(form.getTextField(h.meta.rows[2].by).getText(),'Nice!');
+  assert.equal(form.getTextField(h.meta.rows[2].by).getText(),'ji');
   assert.equal(form.getTextField(h.meta.rows[2].date).getText(),'10/10/26');
   assert.equal(form.getCheckBox(h.meta.rows[1].check).isChecked(),false);
-  assert.equal(form.getTextField(h.meta.rows[1].by).getText(),'Working!');
+  assert.equal(form.getTextField(h.meta.rows[1].by).getText(),'Old Sensei');
   assert.equal(form.getTextField(h.meta.rows[1].date).getText(),'10/01/26');
 });
 
@@ -188,4 +189,14 @@ test('repeating a completed CS1 project preserves the date of its first completi
   const h=await server({repeat:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
   assert.equal(h.pdf.getForm().getTextField(h.meta.rows[0].date).getText(),'10/29/26');
   assert.equal(h.pdf.getForm().getTextField(h.meta.rows[0].by).getText(),'Nice!');
+});
+
+
+test('CS1 custom descriptions survive current-project updates and selected completions',async()=>{
+  const h=await server({customDescription:true,repeat:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
+  const form=h.pdf.getForm();
+  assert.equal(form.getTextField(h.meta.rows[1].by).getText(),'Making very impressive progress');
+  assert.equal(form.getTextField(h.meta.rows[0].by).getText(),'Great teamwork');
+  assert.equal(form.getCheckBox(h.meta.rows[0].check).isChecked(),true);
+  assert.equal(form.getCheckBox(h.meta.rows[1].check).isChecked(),false);
 });

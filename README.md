@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v42**. Replace the script and reload the sheet to use it.
+This revision is **v43**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -135,14 +135,15 @@ forms, choose only a project to mark completed (or None). There is no date picke
 The CS1 explanatory paragraphs and free-text Notes input are removed. Mixed
 whole-day runs ask for a Sensei only when another program requires one.
 
-CS1's By field uses fixed labels. A new current assignment gets `Working!` and
+Blank CS1 By fields use automatic labels. A new current assignment gets `Working!` and
 the journal date only if it has no date yet. Routine updates preserve that start
 date. When a project is first marked complete, its checkbox is checked and By
 becomes `Nice!`; its date becomes the journal date for that completion. Later
 updates to already-completed projects preserve their completion date. Dates are
 read from the selected journal tab, not manually entered or taken from the clock.
-Legacy Sensei names in By are replaced with the appropriate fixed label, and
-blank future rows remain blank. If a student's row or current project changes
+Existing custom By-field text (including instructor descriptions or names) is
+preserved. Only blank fields and automatic `Working!`/`Nice!` labels are updated.
+Blank future rows remain blank. If a student's row or current project changes
 after the form was shown, the update asks you to reopen it.
 
 The whole-day dialog stays open until you close it. It shows the completed
