@@ -19,7 +19,7 @@ Set the student's program in column D and current project in E. Use
 it does not automatically rewrite the PDF. Existing backup and undo behavior
 remains available.
 
-This revision is **v40**. Replace the script and reload the sheet to use it.
+This revision is **v41**. Replace the script and reload the sheet to use it.
 Column D chooses the template; column E chooses the project.
 
 Generation asks for confirmation when it needs to add a new belt tracker.
@@ -126,18 +126,19 @@ folders are moved to Trash; unrelated files remain untouched.
 ## Whole-day progress
 
 CS1 updates do not require a Sensei name. In both single-student and whole-day
-forms, choose a project to mark completed (or None) and its completion date.
+forms, choose only a project to mark completed (or None). There is no date picker.
 The CS1 explanatory paragraphs and free-text Notes input are removed. Mixed
 whole-day runs ask for a Sensei only when another program requires one.
 
-CS1's By field uses fixed labels: checked projects say `Nice!`, and the current
-unchecked project says `Working!`. Its original start date is preserved on
-every later update, including when marking it complete. A blank working-project
-date gets the journal date. A selected completion gets a checkmark and `Nice!`;
-the popup date is used only if that project has no date yet. Existing checked
-projects also retain their dates; legacy Sensei names in By are replaced
-with `Nice!`. Blank future rows remain blank. If a student's row or current
-project changes after the form was shown, the update asks you to reopen it.
+CS1's By field uses fixed labels. A new current assignment gets `Working!` and
+the journal date only if it has no date yet. Routine updates preserve that start
+date. When a project is first marked complete, its checkbox is checked and By
+becomes `Nice!`; its date becomes the journal date for that completion. Later
+updates to already-completed projects preserve their completion date. Dates are
+read from the selected journal tab, not manually entered or taken from the clock.
+Legacy Sensei names in By are replaced with the appropriate fixed label, and
+blank future rows remain blank. If a student's row or current project changes
+after the form was shown, the update asks you to reopen it.
 
 The whole-day dialog stays open until you close it. It shows the completed
 student count, current student's name and processing stage, a progress bar, and

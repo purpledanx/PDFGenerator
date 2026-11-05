@@ -21,7 +21,7 @@ function render(selectedRow=3,unityOnly=false){
 test('whole-day CS1 forms render even when the selected student is on a different program',()=>{
   const {html}=render();
   assert.match(html,/Easton G — CS1/);assert.match(html,/Ada S — CS1/);
-  assert.match(html,/id="dayCs14Complete"/);assert.match(html,/id="dayCs15Date"/);assert.doesNotMatch(html,/id="dayCs14Notes"/);
+  assert.match(html,/id="dayCs14Complete"/);assert.doesNotMatch(html,/type="date"/);assert.doesNotMatch(html,/id="dayCs14Notes"/);
   assert.match(html,/<option value="1" disabled>Storytelling 2: Check It Out/);
   assert.doesNotThrow(()=>new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]));
   const elements=Object.fromEntries(['dayWarning','choose','details','detailTitle','singleFields','senseiFields','dayCs1Fields','summary','results','dayProgress','currentAction','done'].map(id=>[id,{}]));
@@ -33,16 +33,16 @@ test('whole-day CS1 forms render even when the selected student is on a differen
   choice.value='selected';c.chooseScope();assert.equal(elements.dayCs1Fields.hidden,true);
 });
 
-test('completion choices, dates and notes are collected independently for every CS1 student',()=>{
+test('completion choices are collected per student without date or notes inputs',()=>{
   const students=[{row:4,name:'Easton G',project:tasks[1]},{row:5,name:'Ada S',project:tasks[2]}];
   const fields={dayCs14Complete:{value:'0'},dayCs14Date:{value:'2026-10-20'},dayCs14Notes:{value:'Good work'},
     dayCs15Complete:{value:''},dayCs15Date:{value:''},dayCs15Notes:{value:'Keep practicing'}};
   const c=vm.createContext({dayCs1Students:students,el:id=>fields[id]});
   vm.runInContext(source.slice(source.indexOf('  function collectDayCs1Selections(){'),source.indexOf('  function submitCards(){')),c);
   const result=c.collectDayCs1Selections();
-  assert.equal(result[4].cs1CompleteIndex,0);assert.equal(result[4].cs1CompletionDate,'2026-10-20');assert.equal(result[4].notes,undefined);
+  assert.equal(result[4].cs1CompleteIndex,0);assert.equal(result[4].cs1CompletionDate,undefined);assert.equal(result[4].notes,undefined);
   assert.equal(result[5].cs1CompleteIndex,null);assert.equal(result[5].notes,undefined);
-  fields.dayCs14Date.value='';assert.throws(()=>c.collectDayCs1Selections(),/Easton G/);
+  delete fields.dayCs14Date;delete fields.dayCs15Date;assert.doesNotThrow(()=>c.collectDayCs1Selections());
 });
 
 async function server({completeIndex=0,changed=false,alreadyComplete=false,legacyText=false,startedChosen=false,repeat=false}={}){
@@ -83,7 +83,7 @@ async function server({completeIndex=0,changed=false,alreadyComplete=false,legac
 test('whole-day choices mark only the chosen CS1 project and preserve the current working project',async()=>{
   const h=await server();assert.equal(h.results[0].ok,true,JSON.stringify(h.results));assert.equal(h.ready,true);
   const f=h.pdf.getForm();assert.equal(f.getCheckBox(h.meta.rows[0].check).isChecked(),true);
-  assert.equal(f.getTextField(h.meta.rows[0].date).getText(),'10/20/26');assert.equal(f.getTextField(h.meta.rows[0].by).getText(),'Nice!');
+  assert.equal(f.getTextField(h.meta.rows[0].date).getText(),'10/29/26');assert.equal(f.getTextField(h.meta.rows[0].by).getText(),'Nice!');
   assert.equal(f.getCheckBox(h.meta.rows[1].check).isChecked(),false);assert.equal(f.getTextField(h.meta.rows[1].by).getText(),'Working!');
   assert.equal(f.getTextField(h.meta.rows[1].date).getText(),'10/29/26');
   assert.equal(f.getCheckBox(h.meta.rows[2].check).isChecked(),false);
@@ -114,7 +114,7 @@ test('mixed whole-day batches keep each CS1 selection isolated from other studen
     4:{student:'Easton G',project:tasks[1],cs1CompleteIndex:0,cs1CompletionDate:'2026-10-20',notes:'Easton notes'}});
   assert.equal(result.every(r=>r.ok),true);assert.equal(calls[0].overrides.notes,'Default notes for 3');
   assert.equal(calls[0].overrides.cs1CompleteIndex,undefined);
-  assert.equal(calls[1].overrides.cs1CompleteIndex,0);assert.equal(calls[1].overrides.cs1CompletionDate,'2026-10-20');
+  assert.equal(calls[1].overrides.cs1CompleteIndex,0);assert.equal(calls[1].overrides.cs1CompletionDate,undefined);
   assert.equal(calls[1].overrides.notes,'');assert.equal(calls[1].overrides.sensei,'Amber');
 });
 
@@ -123,8 +123,8 @@ test('CS1 popup shows only completion controls without Sensei, Notes or explanat
   const {html}=render(4);
   assert.match(html,/<div id="senseiFields" hidden>/);
   assert.doesNotMatch(html,/Notes for the PDF|Only the selected project gets|Sensei above|updateCs1Notes/);
-  assert.match(html,/id="cs1Complete"/);assert.match(html,/id="cs1Date"/);
-  assert.match(html,/id="dayCs14Complete"/);assert.match(html,/id="dayCs14Date"/);
+  assert.match(html,/id="cs1Complete"/);assert.doesNotMatch(html,/id="cs1Date"/);
+  assert.match(html,/id="dayCs14Complete"/);assert.doesNotMatch(html,/id="dayCs14Date"/);
 });
 
 test('Unity forms hide Sensei and omit the Notes section, including Unity-only whole-day runs',()=>{
@@ -142,7 +142,7 @@ test('Unity forms hide Sensei and omit the Notes section, including Unity-only w
 
 test('dialog submits Unity updates with an empty Sensei and no Notes input, while mixed days still require Sensei',()=>{
   for(const [scope,dayNeedsSensei,expected,cs1]of [['selected',false,'selected',false],['selected',false,'selected',true],['day',false,'day',false],['day',true,null,false]]){
-    const calls=[],fields={sensei:{value:''},summary:{textContent:''},results:{textContent:''},done:{hidden:true},dayProgress:{value:0},currentAction:{textContent:''},cs1Complete:{value:''},cs1Date:{value:'2026-10-29'}};
+    const calls=[],fields={sensei:{value:''},summary:{textContent:''},results:{textContent:''},done:{hidden:true},dayProgress:{value:0},currentAction:{textContent:''},cs1Complete:{value:cs1?'0':''}};
     const run={withSuccessHandler(){return run;},withFailureHandler(){return run;},
       generateFromPopup(...args){calls.push({kind:'selected',args});},beginDayTrackerRun(...args){calls.push({kind:'day',args});}};
     const c=vm.createContext({scope,dayNeedsSensei,isUnity:!cs1,isCS1:cs1,isScratchJr:false,running:false,undoBusy:false,
@@ -152,7 +152,7 @@ test('dialog submits Unity updates with an empty Sensei and no Notes input, whil
     vm.runInContext(source.slice(source.indexOf('  function submitCards(){'),source.indexOf('  function stopDayProgress(){')),c);
     c.submitCards();assert.equal(calls.length,expected?1:0);
     if(expected)assert.equal(calls[0].kind,expected);else assert.match(fields.summary.textContent,/Sensei/);
-    if(expected==='selected'){assert.equal(calls[0].args[2],'');assert.equal(calls[0].args[4],'');}
+    if(expected==='selected'){assert.equal(calls[0].args[2],'');assert.equal(calls[0].args[4],'');if(cs1){assert.equal(calls[0].args[5],0);assert.equal(calls[0].args.length,6);}}
   }
 });
 
@@ -176,9 +176,16 @@ test('CS1 repeating a working-project update preserves the first start date',asy
   assert.equal(form.getCheckBox(h.meta.rows[1].check).isChecked(),false);
 });
 
-test('marking a started CS1 project complete preserves its original start date',async()=>{
+test('new CS1 completion records the journal date automatically, replacing its earlier working date',async()=>{
   const h=await server({startedChosen:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
-  const form=h.pdf.getForm();assert.equal(form.getTextField(h.meta.rows[0].date).getText(),'09/14/26');
+  const form=h.pdf.getForm();assert.equal(form.getTextField(h.meta.rows[0].date).getText(),'10/29/26');
   assert.equal(form.getTextField(h.meta.rows[0].by).getText(),'Nice!');
   assert.equal(form.getCheckBox(h.meta.rows[0].check).isChecked(),true);
+});
+
+
+test('repeating a completed CS1 project preserves the date of its first completion',async()=>{
+  const h=await server({repeat:true});assert.equal(h.results[0].ok,true,JSON.stringify(h.results));
+  assert.equal(h.pdf.getForm().getTextField(h.meta.rows[0].date).getText(),'10/29/26');
+  assert.equal(h.pdf.getForm().getTextField(h.meta.rows[0].by).getText(),'Nice!');
 });
